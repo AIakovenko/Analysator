@@ -1,0 +1,6 @@
+#Error  : Package        : Class                : Method                : Exception
+#================================================================================================
+998     : algo_general   : Main                 : saveSourceToFile      : FileNotFoundException
+999     : algo_general   : Main                 : readSourceFromFile    : FileNotFoundException
+1000    : algo_general   : Main                 : readSourceFromFile    : IOException
+1001    : algo_arrays    : FrameAddArraysData   : initButtons           : InterruptedException

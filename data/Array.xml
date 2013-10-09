@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.7.0_07" class="java.beans.XMLDecoder">
+ <object class="algo_results.TestArray">
+  <void property="array">
+   <array class="java.lang.Object" length="20">
+    <void index="0">
+     <int>12</int>
+    </void>
+    <void index="1">
+     <int>92</int>
+    </void>
+    <void index="2">
+     <int>22</int>
+    </void>
+    <void index="3">
+     <int>57</int>
+    </void>
+    <void index="4">
+     <int>34</int>
+    </void>
+    <void index="5">
+     <int>78</int>
+    </void>
+    <void index="6">
+     <int>88</int>
+    </void>
+    <void index="7">
+     <int>35</int>
+    </void>
+    <void index="8">
+     <int>87</int>
+    </void>
+    <void index="9">
+     <int>20</int>
+    </void>
+    <void index="10">
+     <int>72</int>
+    </void>
+    <void index="11">
+     <int>68</int>
+    </void>
+    <void index="12">
+     <int>1</int>
+    </void>
+    <void index="13">
+     <int>79</int>
+    </void>
+    <void index="14">
+     <int>47</int>
+    </void>
+    <void index="15">
+     <int>59</int>
+    </void>
+    <void index="16">
+     <int>3</int>
+    </void>
+    <void index="17">
+     <int>82</int>
+    </void>
+    <void index="18">
+     <int>46</int>
+    </void>
+    <void index="19">
+     <int>49</int>
+    </void>
+   </array>
+  </void>
+  <void property="type">
+   <string>Integer</string>
+  </void>
+ </object>
+</java>
