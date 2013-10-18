@@ -7,7 +7,7 @@ import algo_files.ImportingModule;
  * Time: 12:31
  * To change this template use File | Settings | File Templates.
  */
-public class SortBubble implements ImportingModule {
+public class SortBubble implements ImportingModule{
     private int[] aInt;
     private float[] aFloat;
     private String[] aString;

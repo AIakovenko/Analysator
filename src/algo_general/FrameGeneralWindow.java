@@ -1,6 +1,5 @@
 package algo_general;
 
-import algo_arrays.ArraysData;
 import algo_arrays.ArraysDataBase;
 import algo_arrays.DataStructure;
 import algo_files.AlgorythmFile;
@@ -8,6 +7,7 @@ import algo_files.FileDataBase;
 import algo_results.*;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -139,7 +139,7 @@ public class FrameGeneralWindow extends JFrame {
 
         initMenuBar();
         initButtonBar();
-//        initStatusBar();
+        initStatusBar();
 
         dataBase = new FileDataBase();
         initTreeView();
@@ -155,21 +155,21 @@ public class FrameGeneralWindow extends JFrame {
                 menuBar.setBounds(0, 0, getWidth(), 21);
                 menuBarWithButtons.setBounds(0, 21, getWidth(), 30);
                 setSplitPaneBounds();
-//                statusBar.setBounds(0,getHeight()-25,getWidth(),25);
+                statusBar.setBounds(0,getHeight()-50,getWidth(),25);
                 splitPane.repaint();
                 scrollTreeView.repaint();
             }
         });
     }
 
-//    private void initStatusBar(){
-//        statusBar = new JToolBar();
-//        statusBar.setBounds(0,getHeight()-25,getWidth(),25);
-//        statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
-//        statusLabel = new JLabel("Status");
-//        statusBar.add(statusLabel);
-//        add(statusBar);
-//        }
+    private void initStatusBar(){
+        statusBar = new JToolBar();
+        statusBar.setBounds(0,getHeight()-25,getWidth(),25);
+        statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        statusLabel = new JLabel("Status");
+        statusBar.add(statusLabel);
+        add(statusBar);
+        }
 
 
     private void initTreeView(){
@@ -381,7 +381,7 @@ public class FrameGeneralWindow extends JFrame {
     }
     private void setSplitPaneBounds(){
         splitPane.setBounds(5, menuBar.getHeight() + menuBarWithButtons.getHeight(),
-                getWidth() - 10, getHeight() - menuBar.getHeight() - menuBarWithButtons.getHeight()-5 );
+                getWidth() - 15, getHeight() - menuBar.getHeight() - menuBarWithButtons.getHeight()-55 );
         upperSplit.setDividerSize(5);
         splitPane.setDividerSize(5);
         upperSplit.setDividerLocation(200);

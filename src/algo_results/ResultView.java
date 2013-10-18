@@ -1,7 +1,4 @@
 package algo_results;
-
-
-
 /**
  * Created with IntelliJ IDEA.
  * User: alex
@@ -9,8 +6,6 @@ package algo_results;
  * Time: 20:40
  * To change this template use File | Settings | File Templates.
  */
-
-
 import javax.swing.*;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ListSelectionEvent;
@@ -20,23 +15,26 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 public class ResultView extends JFrame {
 
-
-
-
     private Dimension dimention;
-    private GraphPanel memory;
-    private GraphPanel time;
+    private JPanel memory;
+    private JPanel time;
 
     private DefaultTableModel modelMainTable;
     private JTable mainTable;
     private DefaultTableModel modelAuxiliaryTable;
     private JTable auxiliaryTable;
     private ListSelectionModel tableSelection;
-    private JComboBox comboTime;
-    private JComboBox comboMemory;
 
     private Object scaleTime = 1;
     private int scaleMemory = 1;
@@ -56,7 +54,6 @@ public class ResultView extends JFrame {
         this.selResultRows = selResultRows;
         addRowMainTable();
         initViewPort();
-        initComboBox();
 //        time.setPoints(timeGrafPoints(50));
 //        memory.setPoints(memoryGrafPoints(20));
     }
@@ -69,69 +66,30 @@ public class ResultView extends JFrame {
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         getContentPane().setLayout(null);
         initTable();
-//        initViewPort();
         initButtons();
 
 
     }
     private void initViewPort(){
-        memory = new GraphPanel("Memory, kB");
+
+        memory = new PaneGraph("Memory, kB", memoryGrafPoints()).getPaneGraf();
         memory.setBounds(getWidth()-320,10,300,300);
         memory.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         memory.setBackground(Color.white);
-        memory.setPoints(memoryGrafPoints(), setColorsGraph());// getMaxMemory()); //TODO
-        memory.setScale(100);
+//        memory.setPoints(memoryGrafPoints(), setColorsGraph());// getMaxMemory()); //TODO
+//        memory.setScale(100);
 
-        time = new GraphPanel("Time, c.");
+        time = new PaneGraph("Time, c.", timeGrafPoints()).getPaneGraf();
         time.setBounds(getWidth() - memory.getWidth() - 330, 10, 300, 300);
         time.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         time.setBackground(Color.white);
-        time.setPoints(timeGrafPoints(), setColorsGraph());
-        time.setScale(100);
+//        time.setPoints(timeGrafPoints(), setColorsGraph());
+//        time.setScale(100);
 
         add(memory);
         add(time);
     }
-    private void initComboBox(){
 
-        Object[] itemScale = {0.25,0.5,1,10,100,500,1000,10000,100000};
-        //================================
-        comboTime = new JComboBox();
-
-        comboTime.setBounds(time.getX(),time.getY()+time.getHeight()+10, time.getWidth(), 20);
-
-        for(Object i : itemScale)
-            comboTime.addItem(i);
-        comboTime.setSelectedIndex(4);
-        comboTime.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object scale = comboTime.getSelectedItem();
-                repaintGraphTime(scale);
-            }
-        });
-
-
-        //=================================
-        comboMemory = new JComboBox();
-
-
-        comboMemory.setBounds(memory.getX(),memory.getY()+memory.getHeight()+10, memory.getWidth(), 20);
-
-        for(Object i : itemScale)
-            comboMemory.addItem(i);
-        comboMemory.setSelectedIndex(4);
-        comboMemory.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object scale = comboMemory.getSelectedItem();
-                repaintGraphMemory(scale);
-            }
-        });
-
-        add(comboTime);
-        add(comboMemory);
-    }
     private void initTable(){
         TableCellEditor nonSelEditor = new TableCellEditor() {
             @Override
@@ -232,7 +190,7 @@ public class ResultView extends JFrame {
     }
     private void initButtons(){
         JButton buttonClose = new JButton("Close");
-        buttonClose.setBounds(getWidth()-135, getHeight()-50, 117,25);
+        buttonClose.setBounds(getWidth()-135, getHeight()-70, 117,25);
         buttonClose.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -316,40 +274,9 @@ public class ResultView extends JFrame {
         }
         return allPoints;
     }
-    private void repaintGraphMemory(Object scale){
-        Float scl = new Float(scale.toString());
-        float f = scl.floatValue();
-        memory.setPoints(memoryGrafPoints(), setColorsGraph());
-        memory.setScale(f);
-        memory.repaint();
 
-    }
-
-    private void repaintGraphTime(Object scale){
-        Float scl = new Float(scale.toString());
-        float f = scl.floatValue();
-        time.setPoints(timeGrafPoints(), setColorsGraph());
-        time.setScale(f);
-        time.repaint();
-
-    }
-    private Color[] setColorsGraph(){
-        Color[] colorGraph = new Color[10];
-        colorGraph[0] = new Color(255, 0, 0);
-        colorGraph[1] = new Color(255, 0, 255);
-        colorGraph[2] = new Color(0, 0, 255);
-        colorGraph[3] = new Color(0, 150, 200);
-        colorGraph[4] = new Color(0, 255, 0);
-        colorGraph[5] = new Color(255, 255, 0);
-        colorGraph[6] = new Color(21, 100, 25);
-        colorGraph[7] = new Color(0, 0, 100);
-        colorGraph[8] = new Color(0, 110, 100);
-        colorGraph[9] = new Color(100, 100, 0);
-        return colorGraph;
-    }
 
 }
-
 class  Coordinates{
     public double x;
     public  double y;
@@ -360,83 +287,105 @@ class  Coordinates{
     }
 }
 
-class GraphPanel extends JPanel {
-    private ArrayList<Coordinates[]> allPoints;
-    private Color[] colorGraph;
-    private float scale;
-    private String name;
-    private int coordX0;
-    private int coordXX;
-    private int coordY0;
-    private int coordYY;
-
-    public GraphPanel(String name) {
-        this.allPoints = null;
-        this.name = name;
-
+class PaneGraph extends JPanel{
+    private JPanel p;
+    private String titleGraph;
+    private ArrayList<Coordinates[]> listCoordinates;
+    public PaneGraph(String titleGraph, List<Coordinates[]> listCoordinates){
+        this.titleGraph = titleGraph;
+        this.listCoordinates =(ArrayList)listCoordinates;
     }
-    public void setPoints(ArrayList<Coordinates[]> points, Color[] colorGraph){
-        this.allPoints = points;
-        this.colorGraph = colorGraph;
+    public JPanel getPaneGraf(){
+        p = new JPanel();
+        p.add(getChartPanel());
 
-    }
-    public  void setScale(float scale){
-        this.scale = scale;
+        return p;
     }
 
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        coordX0 = 30;
-        coordXX = this.getWidth() - 30;
-        coordY0 = this.getHeight() - 30;
-        coordYY = 30;
-        drawPlace(g);
-        drawGrafMem(g);
-    }
-    private void drawPlace(Graphics g){
-        //draw coordinates axises
-        g.drawLine(coordX0, coordY0, coordXX, coordY0);
-        g.drawLine(coordX0, coordY0, coordX0, coordYY);
-
-        //draw grid
-        g.setColor(Color.LIGHT_GRAY);
-        int stepX = 20;
-        int stepGridX =(coordXX-coordX0)/stepX;
-        for (int x = coordX0+stepGridX; x<=coordXX; x=x+stepGridX){
-            g.drawLine(x, coordYY+1, x, coordY0-1);
-        }
-        int stepY = 20;
-        int stepGridY =(coordY0-coordYY)/stepY;
-        for (int y = coordY0-stepGridY; y>=coordYY; y=y-stepGridY){
-            g.drawLine(coordX0+1, y, coordXX-1, y);
-        }
-        g.setColor(Color.black);
-        g.drawString("N",coordXX-5,coordY0+15);
-        g.drawString(name, coordX0, coordYY-5);
-
-    }
-    private void drawGrafMem(Graphics g){
-        g.setColor(Color.BLUE);
-
-        if(allPoints != null){
-            for(int i = 0; i<allPoints.size(); i++){
-                for (int j = 1; j<allPoints.get(i).length; j++){
-                    g.setColor(colorGraph[i]);
-                    if((coordX0+allPoints.get(i)[j].x>coordXX) ||(coordY0-allPoints.get(i)[j].y * scale <coordYY))
-                        break;
-                    else{
-                        g.drawLine(coordX0 + (int)allPoints.get(i)[j-1].x, (coordY0 -(int)(allPoints.get(i)[j-1].y * scale)),
-                           coordX0 + (int)allPoints.get(i)[j].x, coordY0 - (int)(allPoints.get(i)[j].y * scale));
-
-                        Color gTemp = g.getColor();
-                        g.setColor(Color.black);
-                        g.drawOval(coordX0 + (int)(allPoints.get(i)[j].x) - 1,
-                                coordY0 - (int)(allPoints.get(i)[j].y * scale) - 1,2,2);
-                        g.setColor(gTemp);
-                    }
-                }
+    public ChartPanel getChartPanel(){
+        //створюємо панель для графіка
+        final ChartPanel chartPanel = new ChartPanel(getChart());
+           //встановлюємо розмір діаграми (можна також скористатись методами JFreeChart цього)
+        chartPanel.setPreferredSize(new java.awt.Dimension(280, 280));
+        //додаємо панель на створений нами фрейм
+        chartPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JOptionPane.showMessageDialog(p, "text", "title",JOptionPane.ERROR_MESSAGE);
             }
-        }
+        });
+//    frame.setContentPane(chartPanel);
+//    //підганяємо розміри фрейму
+//    frame.pack();
+//    //робимо усе видимим
+        return chartPanel;
     }
+    private JFreeChart getChart(){
+        /*Create data for building all graphs */
+        XYSeriesCollection data = new XYSeriesCollection();
+
+        /*Mark line*/
+        int index = 0;
+
+        for(Coordinates[] kit: listCoordinates ){
+
+            /*Add data to kit of one line*/
+            XYSeries series = new XYSeries("Line #"+ ++index);
+            for(int i = 0; i<kit.length; i++){
+                series.add(kit[i].x, kit[i].y);
+            }
+            data.addSeries(series);
+        }
+
+
+       /* //створюємо 1 ряд даних
+
+        XYSeries series = new XYSeries("a");
+        //додаємо точки на графіку
+        series.add(1, 11);
+        series.add(2, 12);
+        series.add(3, 13);
+        series.add(4, 14);
+        series.add(5, 15);
+        series.add(6, 16);
+        series.add(7, 17);
+        series.add(8, 14);
+        series.add(9, 13.5);
+        series.add(10, 11);
+
+        XYSeries series2 = new XYSeries("b");
+        //додаємо точки на графіку
+        series2.add(0, 21);
+        series2.add(4, 22);
+        series2.add(5, 23);
+        series2.add(6, 24);
+        series2.add(7, 25);
+        series2.add(8, 26);
+        series2.add(9, 27);
+        series2.add(10, 24);
+        series2.add(11, 23.5);
+        series2.add(12, 21);
+
+
+        // зразу ж додаємо ряд в набір даних
+
+        data.addSeries(series);
+        data.addSeries(series2);
+       */
+        //створюємо діаграму
+        final JFreeChart chart = ChartFactory.createXYLineChart(
+                titleGraph, //Заголовок діаграми
+                "X",  //назва осі X
+                "Y",  //назва осі Y
+                data, //дані
+                PlotOrientation.VERTICAL, //орієнтація
+                true, // включити легенду
+                true, //підказки
+                false // urls
+        );
+        return chart;
+    }
+
+
 
 }

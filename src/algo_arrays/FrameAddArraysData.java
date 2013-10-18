@@ -18,7 +18,7 @@ import java.util.EventObject;
 
 public class FrameAddArraysData extends JFrame  {
 
-    private final int STEP_LEFT = 20;
+    private final int STEP_LEFT = 10;
     private final int STEP_DOWN = 40;
     private final int FIELD_WIDTH = 200;
     private final int FIELD_HEIGHT = 25;
@@ -43,7 +43,7 @@ public class FrameAddArraysData extends JFrame  {
         new JFrame();
         this.setResizable(false);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setSize(700, 360);
+        this.setSize(700, 400);
         this.setLocation(screenSize.width/2-getWidth()/2, screenSize.height/2-getHeight()/2);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.getContentPane().setLayout(null);
@@ -60,7 +60,7 @@ public class FrameAddArraysData extends JFrame  {
 
     private void initButtons(){
         JButton buttonCancel = new JButton("Cancel");
-        buttonCancel.setBounds(getWidth() - 130, getHeight() - GAP*6,
+        buttonCancel.setBounds(getWidth() - 135, getHeight() - 65 ,
                 Main.buttonSize.width, Main.buttonSize.height);
         buttonCancel.addMouseListener(new MouseAdapter() {
             @Override
@@ -70,7 +70,7 @@ public class FrameAddArraysData extends JFrame  {
         });
 
         JButton buttonOk = new JButton("OK");
-        buttonOk.setBounds(getWidth()-255, getHeight()-GAP*6,
+        buttonOk.setBounds(getWidth()-255, getHeight()-65,
                 Main.buttonSize.width,Main.buttonSize.height);
         buttonOk.addMouseListener(new MouseAdapter() {
             @Override
@@ -83,7 +83,7 @@ public class FrameAddArraysData extends JFrame  {
         JButton buttonGenerate = new JButton("Generate");
         buttonGenerate.setSize(Main.buttonSize);
         buttonGenerate.setLocation(STEP_LEFT,
-                getHeight()-GAP*6);
+                getHeight()-65);
         buttonGenerate.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -210,7 +210,7 @@ public class FrameAddArraysData extends JFrame  {
 
         JScrollPane scrollTable = new JScrollPane(tableArrays);
         scrollTable.setSize(255,getHeight()-150);
-        scrollTable.setLocation(getWidth()-scrollTable.getWidth()-10, 40);
+        scrollTable.setLocation(getWidth()-scrollTable.getWidth()-15, 40);
 
         add(scrollTable);
 

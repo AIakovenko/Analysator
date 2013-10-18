@@ -35,7 +35,7 @@ public class FrameCreateAlgo extends JFrame {
 
             new JFrame();
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            setSize(500,200);
+            setSize(500,250);
             setResizable(false);
             setLocation(screenSize.width/2-getWidth()/2, screenSize.height/2-getHeight()/2);
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -48,21 +48,21 @@ public class FrameCreateAlgo extends JFrame {
                 @Override
                 public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    scrollPane.setBounds(10, 10, getWidth() - 20, getHeight() - 60);
-                    buttonOK.setLocation(getWidth()/2-buttonOK.getWidth()/2, getHeight()-buttonOK.getHeight()-10);
+                    scrollPane.setBounds(10, 10, getWidth() - 25, getHeight() - 90);
+                    buttonOK.setLocation(getWidth()/2-buttonOK.getWidth()/2, getHeight()-65);
                 }
             });
         }
         private void initTextArea(String reportText){
             text = new JTextArea(reportText);
             scrollPane = new JScrollPane(text);
-            scrollPane.setBounds(10, 10, getWidth() - 10, getHeight() - 60);
+            scrollPane.setBounds(10, 10, getWidth() - 25, getHeight() - 90);
             this.add(scrollPane);
         }
         private void initButton(){
             buttonOK = new JButton("OK");
             buttonOK.setSize(Main.buttonSize);
-            buttonOK.setLocation(getWidth() / 2 - buttonOK.getWidth() / 2, getHeight() - buttonOK.getHeight() - 10);
+            buttonOK.setLocation(getWidth() / 2 - buttonOK.getWidth() / 2, getHeight() - 65);
             buttonOK.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -72,7 +72,6 @@ public class FrameCreateAlgo extends JFrame {
             this.add(buttonOK);
         }
     }
-
     private JTextArea textArea;
     private JTextField fieldNameFile;
     private JTextField fieldCommandLine;
@@ -121,8 +120,8 @@ public class FrameCreateAlgo extends JFrame {
 
 
         JScrollPane textAreaScrollPane = new JScrollPane(textArea);
-        textAreaScrollPane.setSize(getWidth()-320, getHeight()-100);
-        textAreaScrollPane.setLocation(310, 40);
+        textAreaScrollPane.setSize(getWidth()-325, getHeight()-120);
+        textAreaScrollPane.setLocation(310, 20);
         add(textAreaScrollPane);
 
 
@@ -183,7 +182,7 @@ public class FrameCreateAlgo extends JFrame {
     private void initButton(){
         JButton buttonExit = new JButton("Exit");
         buttonExit.setSize(Main.buttonSize);
-        buttonExit.setLocation(getWidth()-130, getHeight()-50);
+        buttonExit.setLocation(getWidth()-135, getHeight()-65);
         buttonExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

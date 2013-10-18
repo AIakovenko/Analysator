@@ -45,7 +45,7 @@ public class FrameFileDataBaseEditor extends JFrame {
             new JFrame();
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             this.setResizable(false);
-            this.setSize(500, 200);
+            this.setSize(480, 200);
             this.setLocation(screenSize.width/2-getWidth()/2, screenSize.height/2-getHeight()/2);
             this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             this.getContentPane().setLayout(null);
@@ -69,7 +69,7 @@ public class FrameFileDataBaseEditor extends JFrame {
                 }
             });
 
-            buttCancel.setBounds(this.getWidth()-130, this.getHeight()-40,117,25);
+            buttCancel.setBounds(this.getWidth()-140, this.getHeight()-70,120,25);
 
             JButton buttOk = new JButton("Ok");
             buttOk.addMouseListener(new MouseAdapter() {
@@ -81,7 +81,7 @@ public class FrameFileDataBaseEditor extends JFrame {
                         dispose();
                 }
             });
-            buttOk.setBounds(this.getWidth()-255,this.getHeight()-40,117,25);
+            buttOk.setBounds(this.getWidth()-265,this.getHeight()-70,120,25);
 
             JButton buttOpen = new JButton("...");
             buttOpen.addMouseListener(new MouseAdapter() {
@@ -90,7 +90,7 @@ public class FrameFileDataBaseEditor extends JFrame {
                     openFileDialog();
                 }
             });
-            buttOpen.setBounds(440, 80,50,25);
+            buttOpen.setBounds(410, 80,50,25);
 
 
             add(buttCancel);
@@ -101,7 +101,7 @@ public class FrameFileDataBaseEditor extends JFrame {
         private void initTextFields(){
 /*===================Text Field of algorithm`s name==============*/
             nameTextField = new JTextField();
-            nameTextField.setBounds(20, 30, 200,27);
+            nameTextField.setBounds(10, 30, 200,27);
             nameTextField.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -120,7 +120,7 @@ public class FrameFileDataBaseEditor extends JFrame {
 
 /*===================Text Field Path file======================*/
             pathFileTextField = new JTextField();
-            pathFileTextField.setBounds(nameTextField.getX(), nameTextField.getY()+50, 410, 27);
+            pathFileTextField.setBounds(nameTextField.getX(), nameTextField.getY()+50, 390, 27);
 
             JLabel pathFileLabel = new JLabel("File path");
             pathFileLabel.setBounds(pathFileTextField.getX(), pathFileTextField.getY()-25, 200, 27);
@@ -131,7 +131,7 @@ public class FrameFileDataBaseEditor extends JFrame {
         private void initComboBox(){
             String[] algoTypes = {"Sort", "Search"};
             algoTypeComboBox = new JComboBox<String>(algoTypes);
-            algoTypeComboBox.setBounds(290, 30, 200, 27);
+            algoTypeComboBox.setBounds(260, 30, 200, 27);
 
             add(algoTypeComboBox);
 
@@ -204,7 +204,7 @@ public class FrameFileDataBaseEditor extends JFrame {
         new JFrame();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setResizable(false);
-        this.setSize(500, 300);
+        this.setSize(500, 350);
         this.setLocation(screenSize.width/2-getWidth()/2, screenSize.height/2-getHeight()/2);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().setLayout(null);
@@ -225,7 +225,7 @@ public class FrameFileDataBaseEditor extends JFrame {
 
     private void initButtons(){
         buttonApply = new JButton("Apply");
-        buttonApply.setBounds(127, getHeight()-40, 117, 25);
+        buttonApply.setBounds(115, getHeight()-70, 120, 25);
         buttonApply.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -235,7 +235,7 @@ public class FrameFileDataBaseEditor extends JFrame {
         });
 
         buttonOK = new JButton("OK");
-        buttonOK.setBounds(buttonApply.getX()+buttonApply.getWidth()+5, getHeight()-40, 117, 25);
+        buttonOK.setBounds(buttonApply.getX()+buttonApply.getWidth()+5, getHeight()-70, 120, 25);
         buttonOK.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -246,7 +246,7 @@ public class FrameFileDataBaseEditor extends JFrame {
         });
 
         buttonCancel = new JButton("Cancel");
-        buttonCancel.setBounds(buttonOK.getX()+buttonOK.getWidth()+5, getHeight()-40, 117, 25);
+        buttonCancel.setBounds(buttonOK.getX()+buttonOK.getWidth()+5, getHeight()-70, 120, 25);
         buttonCancel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -255,7 +255,7 @@ public class FrameFileDataBaseEditor extends JFrame {
         });
 
         buttonOpen = new JButton("...");
-        buttonOpen.setBounds(getWidth()-60, getHeight()-80, 50, 25);
+        buttonOpen.setBounds(getWidth()-65, getHeight()-130, 50, 25);
         buttonOpen.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -324,10 +324,10 @@ public class FrameFileDataBaseEditor extends JFrame {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.getColumnModel().getColumn(0).setPreferredWidth(160);
         table.getColumnModel().getColumn(1).setPreferredWidth(80);
-        table.getColumnModel().getColumn(2).setPreferredWidth(240);
+        table.getColumnModel().getColumn(2).setPreferredWidth(235);
 
         scrollTable = new JScrollPane(table);
-        scrollTable.setBounds(10,10, getWidth()-20, 130);
+        scrollTable.setBounds(10,10, getWidth()-25, 130);
 
         add(scrollTable);
 
@@ -403,13 +403,13 @@ public class FrameFileDataBaseEditor extends JFrame {
 
     private void initTextField(){
         JLabel labelName = new JLabel("Name");
-        labelName.setBounds(10 , scrollTable.getY()+scrollTable.getHeight()+10, 100, 25 );
+        labelName.setBounds(10 , scrollTable.getY()+scrollTable.getHeight()+10, 95, 25 );
         textFieldName = new JTextField();
         textFieldName.setBounds(labelName.getX()+labelName.getWidth()+10,
                 scrollTable.getY()+scrollTable.getHeight()+10, 370,25);
 
         JLabel labelFilePath = new JLabel("File name");
-        labelFilePath.setBounds(10 , textFieldName.getY()+textFieldName.getHeight()+45, 100, 25 );
+        labelFilePath.setBounds(10 , textFieldName.getY()+textFieldName.getHeight()+45, 95, 25 );
         textFieldFilePath = new JTextField();
         textFieldFilePath.setBounds(textFieldName.getX(),
                 textFieldName.getY()+textFieldName.getHeight()+45, 310,25);
@@ -424,7 +424,7 @@ public class FrameFileDataBaseEditor extends JFrame {
     }
     private void initComboBox(){
         JLabel labelType = new JLabel("Type");
-        labelType.setBounds(10 , textFieldName.getY()+textFieldName.getHeight()+10, 100, 25 );
+        labelType.setBounds(10 , textFieldName.getY()+textFieldName.getHeight()+10, 95, 25 );
 
         String[] types = {"","Sort", "Search"};
         comboBoxType = new JComboBox<String>(types);
