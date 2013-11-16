@@ -1,9 +1,11 @@
 package algo_general;
 
-import algo_arrays.ArraysData;
-import algo_arrays.DataStructure;
+
+import algo_arrays.*;
+
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -14,44 +16,62 @@ import java.util.Random;
  * To change this template use File | Settings | File Templates.
  */
 
-public class DataCalc implements Runnable{
+public class DataCalc /*implements Runnable*/{
 
-    private final int POINTS = 10;
-    private DataIn dataIn;
-    private Object[][] arraysIn;
-    private ArrayList<Object[][]> listArrays;
+//    private DataIn dataIn;
+//    private List<DataStructures> listArrays;
+    private DataStructures dataIn;
+    private int numberOfPoints;
+    private DataStructures dataOut;
 
 
 
-    public DataCalc(DataIn obj){
-        dataIn = obj;
-        listArrays = new ArrayList<Object[][]>(POINTS);
+    /*public DataCalc(DataIn dataIn){
+        this.dataIn = dataIn;
+        listArrays = new ArrayList<DataStructures>();
+    }*/
+    public DataCalc(DataStructures dataIn, int numberOfPoints){
+        this.dataIn = dataIn;
+        this.numberOfPoints = numberOfPoints;
     }
 
-    public Object[][] getArraysIn(int index){
+    /*public DataStructures getStructureIn(int index){
         return listArrays.get(index);
+    }*/
+    public DataStructures getStructureIn(){
+        return dataOut;
     }
-
-    public void run(){
+    /*public void run(){
         createDataSet();
-    }
+    }*/
 
-    private void createDataSet(){
-
-        for (int k = 0; k< dataIn.getArrData().getStructure().length; k++){
+   /* private void createDataSet(){
+        DataStructures arraysIn;
+        for (int k = 0; k < dataIn.getArrData().getLength(); k++){
             int size = 0;
-            arraysIn = new Object[dataIn.getNumberOfPoints()][];
-            for(int i = 0; i<arraysIn.length; i++){
+            arraysIn = new DataArrays<Integer[]>();
+            for(int i = 0; i<dataIn.getNumberOfPoints(); i++){
                 size = size + dataIn.getArrData().getLength()/dataIn.getNumberOfPoints();
-                arraysIn[i] = new Object[size];
+//                arraysIn[i] = new Object[size];
+                Integer[] array  = new Integer[size];
                 for(int j = 0; j<size; j++){
-                     arraysIn[i][j] = dataIn.getArrData().getStructure()[k][j];
+//                     arraysIn[i][j] = dataIn.getArrData().getStructure()[k][j];
+                    Integer [] ar = (Integer[])dataIn.getArrData().getFromKit(k);
+                    array[j] =ar[j];
                 }
-                shuffleDataSet(arraysIn[i]);
+                arraysIn.addToKit(array);
+//                shuffleDataSet(arraysIn.getFromKit(i));
             }
             listArrays.add(arraysIn);
         }
-    }
+    }*/
+   public void createDataSet(int indexElement){
+
+       MeasureKit measureKit = new MeasureKit(dataIn,numberOfPoints);
+       dataOut = measureKit.createMeasureKit(indexElement);
+
+
+   }
 
     private void shuffleDataSet(Object[] array){
         int n = array.length;

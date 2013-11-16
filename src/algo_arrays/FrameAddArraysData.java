@@ -15,6 +15,8 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EventObject;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class FrameAddArraysData extends JFrame  {
 
@@ -32,6 +34,7 @@ public class FrameAddArraysData extends JFrame  {
     private ArraysDataBase dataList;
     private JSpinner numberKitElem;
     private int selectedRow = -1;
+    private Map<Integer,Object> structs;
 
     public FrameAddArraysData(){
         super("Arrays Editor");
@@ -49,6 +52,7 @@ public class FrameAddArraysData extends JFrame  {
         this.getContentPane().setLayout(null);
 
         dataList = Main.transferArraysDataFromFrameGeneralWindow();
+
 
         initTextField();
         initComboBox();
@@ -91,19 +95,27 @@ public class FrameAddArraysData extends JFrame  {
                 if (checkData()){
                     try{
                         GenerateDataKit dataKit = new GenerateDataKit(Integer.parseInt(textFieldResult.getText()),
-                                comboBoxType.getSelectedIndex(), comboBoxState.getSelectedItem().toString(),
+                                structs.get(comboBoxType.getSelectedIndex()),
+                                comboBoxState.getSelectedItem().toString(),
                                 Integer.parseInt(numberKitElem.getValue().toString()));
 
                         Thread threadDataKit = new Thread(dataKit);
                         threadDataKit.run();
                         threadDataKit.join();
-                        DataStructure data = Main.transferArraysDataFromFrameGeneralWindow().getData(
+                        /*DataStructure data = Main.transferArraysDataFromFrameGeneralWindow().getData(
                             Main.transferArraysDataFromFrameGeneralWindow().getLength()-1
+                        );*/
+                        DataStructures data = Main.transferArraysDataFromFrameGeneralWindow().getData(
+                                Main.transferArraysDataFromFrameGeneralWindow().getLength()-1
                         );
                         tableModelArrays.addRow(loadRow(data));
                     }catch (InterruptedException ex){
                         showMessage("error", "Error# 1001 "+ex.getMessage(),"Add data error!");
+                    }catch (UnsupportedOperationException ex){
+                        showMessage("error", "Error# 1001 "+ex.getMessage(),"Add data error!");
+                        ex.printStackTrace();
                     }
+
                 }
             }
         });
@@ -117,44 +129,29 @@ public class FrameAddArraysData extends JFrame  {
         TableCellEditor nonSelEditor = new TableCellEditor() {
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             @Override
-            public Object getCellEditorValue() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public Object getCellEditorValue() {return null; }
 
             @Override
-            public boolean isCellEditable(EventObject anEvent) {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public boolean isCellEditable(EventObject anEvent) {return false;}
 
             @Override
-            public boolean shouldSelectCell(EventObject anEvent) {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public boolean shouldSelectCell(EventObject anEvent) {return false;}
 
             @Override
-            public boolean stopCellEditing() {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public boolean stopCellEditing() {return false;}
 
             @Override
-            public void cancelCellEditing() {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public void cancelCellEditing() {/*NOP*/}
 
             @Override
-            public void addCellEditorListener(CellEditorListener l) {
-
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public void addCellEditorListener(CellEditorListener l) {/*NOP*/}
 
             @Override
-            public void removeCellEditorListener(CellEditorListener l) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public void removeCellEditorListener(CellEditorListener l) {/*NOP*/}
         };
         tableModelArrays = new DefaultTableModel();
 
@@ -167,8 +164,10 @@ public class FrameAddArraysData extends JFrame  {
             for(int i = 0; i<dataList.getLength(); i++){
                 tableModelArrays.addRow(new String[]{
                         Integer.toString(i + 1),
-                        dataList.getData(i).getTypeData(),
-                        Integer.toString(dataList.getData(i).getLength()),
+                        /*dataList.getData(i).getTypeData(),*/
+                        dataList.getData(i).getType(),
+                       /* Integer.toString(dataList.getData(i).getLength()),*/
+                        Integer.toString(dataList.getData(i).getLength(0)),
                         dataList.getData(i).getState()
                 });
             }
@@ -345,6 +344,11 @@ public class FrameAddArraysData extends JFrame  {
     }
     private void initComboBox(){
         String[] valueTypes = {"Integer", "Float", "String"};
+        structs = new Hashtable<Integer, Object>();
+        structs.put(0, new Integer(0));
+        structs.put(1, new float[0]);
+        structs.put(2, new String());
+
         comboBoxType = new JComboBox(valueTypes);
         comboBoxType.setBounds(textFieldResult.getX(),
                 textFieldResult.getY() + textFieldResult.getHeight()+GAP, FIELD_WIDTH, FIELD_HEIGHT);
@@ -412,7 +416,7 @@ public class FrameAddArraysData extends JFrame  {
             return true;
         }
     }
-    private Object[] loadRow(DataStructure obj){
+    /*private Object[] loadRow(DataStructure obj){
         return new Object[]
                 {
                     Integer.toString(tableModelArrays.getRowCount()+1),
@@ -420,6 +424,16 @@ public class FrameAddArraysData extends JFrame  {
                         Integer.toString(obj.getLength()),
                         obj.getState(),
                         obj.getKitLength()
+                };
+    }*/
+    private Object[] loadRow(DataStructures obj){
+        return new Object[]
+                {
+                        Integer.toString(tableModelArrays.getRowCount()+1),
+                        obj.getType(),
+                        Integer.toString(obj.getLength(0)),
+                        obj.getState(),
+                        obj.kitSize()
                 };
     }
 

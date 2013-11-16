@@ -1,7 +1,7 @@
 package algo_general;
 
 import algo_arrays.ArraysDataBase;
-import algo_arrays.DataStructure;
+import algo_arrays.DataStructures;
 import algo_files.AlgorythmFile;
 import algo_files.FileDataBase;
 import algo_results.*;
@@ -249,9 +249,9 @@ public class FrameGeneralWindow extends JFrame {
         JComboBox comboBox = new JComboBox();
         if(dataArrays != null){
             for(int i = 0; i<dataArrays.getLength(); i++){
-                comboBox.addItem(dataArrays.getData(i).getTypeData()+
-                        "[" + Integer.toString(dataArrays.getData(i).getLength()) +"] "+
-                dataArrays.getData(i).getState() + "; Kit=" + dataArrays.getData(i).getKitLength());
+                comboBox.addItem(dataArrays.getData(i).getType()+
+                        "[" + Integer.toString(dataArrays.getData(i).getLength(0)) +"] "+
+                dataArrays.getData(i).getState() + "; Kit=" + dataArrays.getData(i).getLength(0));
             }
         }
         arraysColumn.setCellEditor(new DefaultCellEditor(comboBox));
@@ -712,30 +712,35 @@ public class FrameGeneralWindow extends JFrame {
 
     private void runTest(){
         selectedRow = mainTable.getSelectedRow();
-        if(selectedRow == -1)
+
+        if(selectedRow == -1)//if nothing was selected
             return;
         if((mainTable.getValueAt(selectedRow,4) == null) ||(mainTable.getValueAt(selectedRow,4).equals(0))){
             showMessage("error","Data didn't select","Data error");
         }
         else{
             AlgorythmFile aF = null;
-            DataStructure  aD = null;
+            DataStructures  aD = null;
             for (int i = 0; i<dataBase.getLength(); i++){
                 if(dataBase.getFile(i).getAlgorythmName().equals(mainTable.getValueAt(selectedRow,1).toString()))
                     aF = dataBase.getFile(i);
             }
             for (int i = 0; i<dataArrays.getLength(); i++){
                 if(
-                        (dataArrays.getData(i).getLength() ==
+                        (dataArrays.getData(i).getLength(0) ==
                                 parseArrayLength(mainTable.getValueAt(selectedRow,4).toString()) )
-                                && (dataArrays.getData(i).getTypeData().equals(parseArrayType(mainTable.getValueAt(selectedRow, 4).toString())))
+                                && (dataArrays.getData(i).getType().equals(parseArrayType(mainTable.getValueAt(selectedRow, 4).toString())))
                         )
                         aD = dataArrays.getData(i);
             }
-
+           /**
+            * Run process of measuring
+            */
             DataOut dataOut = Main.runTest(aF, aD, Integer.parseInt(mainTable.getValueAt(selectedRow, 3).toString()));
 
-
+            /**
+             * Save and write results of measuring to table results
+             */
             if(listDataOut.addData(dataOut))
                 addResultToTable(dataOut.getAlgoName(), dataOut.getMaxTime(), dataOut.getMaxMemory(),
                         dataOut.getMaxValueLength(), dataOut.getNumberOfPoints(), dataOut.getType());

@@ -1,4 +1,5 @@
-package algo_arrays; /**
+package algo_arrays;
+/**
  * Created with IntelliJ IDEA.
  * User: alex
  * Date: 07.05.13
@@ -10,18 +11,28 @@ import java.io.Serializable;
 import java.util.*;
 public class ArraysDataBase implements Serializable{
 
-    private ArrayList<DataStructure> arraysBase;
+    private ArrayList<DataStructures> arraysBase;
 
     public ArraysDataBase(){
-        arraysBase = new ArrayList<DataStructure>();
+        arraysBase = new ArrayList<DataStructures>();
     }
 
-    public boolean addData(DataStructure obj){
+   /* public boolean addData(DataStructure obj){
+        return arraysBase.add(obj);
+
+    }*/
+    public boolean addData(DataStructures obj){
         return arraysBase.add(obj);
 
     }
 
-    public DataStructure getData(int index){
+    /*public DataStructure getData(int index){
+        if(arraysBase != null)
+            return arraysBase.get(index);
+        else
+            return null;
+    }*/
+    public DataStructures getData(int index){
         if(arraysBase != null)
             return arraysBase.get(index);
         else
@@ -32,8 +43,15 @@ public class ArraysDataBase implements Serializable{
         return arraysBase.size();
     }
 
-    public DataStructure deleteData(int index){
+    /*public DataStructure deleteData(int index){
         DataStructure array = arraysBase.remove(index);
+        if(array != null)
+            return array;
+        else
+            return null;
+    }*/
+    public DataStructures deleteData(int index){
+        DataStructures array = arraysBase.remove(index);
         if(array != null)
             return array;
         else

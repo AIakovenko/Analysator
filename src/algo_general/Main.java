@@ -1,8 +1,8 @@
 package algo_general;
 
-import algo_arrays.ArraysData;
+import algo_arrays.DataArrays;
 import algo_arrays.ArraysDataBase;
-import algo_arrays.DataStructure;
+import algo_arrays.DataStructures;
 import algo_files.*;
 import algo_results.DataOut;
 import algo_results.ListDataOut;
@@ -33,6 +33,7 @@ public class Main {
 
     public static void transferDataArrayToMainWindow(ArraysDataBase array){
         frames.getMainWindow().setDataArrays(array);
+
     }
 
     public static void runDataWindow(){
@@ -73,101 +74,107 @@ public class Main {
 
         }
     }
-    public static DataOut runTest(AlgorythmFile algorythmFile, DataStructure arraysData, int numberOfPoints){
-        DataIn dataIn = new DataIn(algorythmFile, arraysData, numberOfPoints);
-        DataCalc calc = new DataCalc(dataIn);
+    public static DataOut runTest(AlgorythmFile algorythmFile, DataStructures arraysData, int numberOfPoints){
+//        DataIn dataIn = new DataIn(algorythmFile, arraysData, numberOfPoints);
+//        DataCalc calc = new DataCalc(dataIn);
+
+
+        DataOut dataOut = null;
+        ArrayList<Double[]> timeEachKitElem = new ArrayList<Double[]>();
+        ArrayList<Double[]> memoryEachKitElem = new ArrayList<Double[]>();
+
+        DataCalc calc = new DataCalc(arraysData, numberOfPoints);
+
 //        calc.run();
 
-        Thread calculation = new Thread(calc);
+
+
+        /*Thread calculation = new Thread(calc);
         try {
             calculation.start();
             calculation.join();
         }catch (InterruptedException ex){
+            //NOP
+        }*/
 
-        }
 
-        DataOut dataOut = null;
-        double [][] timeEachKitElem = new double[arraysData.getKitLength()][];
-        double [][] memoryEachKitElem = new double[arraysData.getKitLength()][];
-        for(int step = 0; step<arraysData.getKitLength(); step++ ){
+       /* double [][] timeEachKitElem = new double[arraysData.kitSize()][];
+        double [][] memoryEachKitElem = new double[arraysData.kitSize()][];*/
+        for(int step = 0; step<arraysData.kitSize(); step++ ){
+           /*
+            * Prepares data for testing.
+            */
+            calc.createDataSet(step);
+            DataStructures measureKit = calc.getStructureIn();
 
-            Object[][] obj = calc.getArraysIn(step);
-//            Object[][] obj = calc.getArraysIn();
-            String type = arraysData.getTypeData();
+            /*
+             * Creates object where will be saved results of testing
+             */
+            dataOut = new DataOut(algorythmFile.getAlgorythmName(), measureKit.getLength(),numberOfPoints);
+            dataOut.setType(arraysData.getType());
 
-            int[][] arrayInt = null;
-            if(type.equals("Integer")){
-                arrayInt = new int[obj.length][];
-                for(int i = 0; i<obj.length; i++){
-                    arrayInt[i] = new int[obj[i].length];
-                    for(int j = 0; j<obj[i].length; j++)
-                        arrayInt[i][j] = ((Integer)obj[i][j]).intValue();
-                }
-            }
-            float[][] arrayFloat = null;
-            if(type.equals("Float")){
-                arrayFloat = new float[obj.length][];
-                for(int i = 0; i<obj.length; i++){
-                    arrayFloat[i] = new float[obj[i].length];
-                    for(int j = 0; j<obj[i].length; j++)
-                        arrayFloat[i][j] = ((Float)obj[i][j]).floatValue();
-                }
-            }
-            String[][] arrayString = null;
-            if(type.equals("String")){
-                arrayString = new String[obj.length][];
-                for(int i = 0; i<obj.length; i++){
-                    arrayString[i] = new String[obj[i].length];
-                    for(int j = 0; j<obj[i].length; j++)
-                        arrayString[i][j] = obj[i][j].toString();
-                }
-            }
+            Double[] time = new Double[numberOfPoints];
+            Double[] memory = new Double[numberOfPoints];
 
-            dataOut = new DataOut(algorythmFile.getAlgorythmName(), obj[numberOfPoints-1].length,numberOfPoints);
-            dataOut.setType(arraysData.getTypeData());
-            timeEachKitElem[step] = new double[numberOfPoints];
-            memoryEachKitElem[step] = new double[numberOfPoints];
-
-            for (int i = 0; i<obj.length; i++){
-
+            for(int part = 0; part < measureKit.kitSize(); part++){
                 ImportingModuleEngine examineAlgorythm = new ImportingModuleEngine(algorythmFile);
-                if(arraysData.getTypeData().equals("Integer"))
-                    examineAlgorythm.setIntArray(arrayInt[i]);
-                if(arraysData.getTypeData().equals("Float"))
-                    examineAlgorythm.setFloatArray(arrayFloat[i]);
-                if(arraysData.getTypeData().equals("String"))
-                    examineAlgorythm.setStringArray(arrayString[i]);
+
+                if(arraysData.getFromKit(step).getClass() == Integer[].class){
+                    int[] array = new int[measureKit.getLength(part)];
+                    for(int i = 0; i < measureKit.getLength(part); i++){
+                        array[i] = ((Integer[])measureKit.getFromKit(part))[i];
+                    }
+                    examineAlgorythm.setIntArray(array);
+                }
+                if(arraysData.getFromKit(step).getClass() == Float[].class){
+                    float[] array = new float[measureKit.getLength(part)];
+                    for(int i = 0; i < measureKit.getLength(part); i++){
+                        array[i] = ((Float[])measureKit.getFromKit(part))[i];
+                    }
+                    examineAlgorythm.setFloatArray(array);
+                }
+                if(arraysData.getFromKit(step).getClass() == String[].class){
+                    String[] array = new String[measureKit.getLength(part)];
+                    for(int i = 0; i < measureKit.getLength(part); i++){
+                        array[i] = ((String[])measureKit.getFromKit(part))[i];
+                    }
+                    examineAlgorythm.setStringArray(array);
+                }
 
                 threadExamineAlgorythm = new Thread(examineAlgorythm);
-
+                /**
+                 * Start process algorythms testing
+                 */
                 try{
                     threadExamineAlgorythm.start();
                     threadExamineAlgorythm.join();
                 }catch (InterruptedException ex){
                     ex.getStackTrace();
                 }
-                timeEachKitElem[step][i] = totalTime/1000;
-                memoryEachKitElem[step][i] = totalMemory/1024;
-//                dataOut.setTime(totalTime/1000, i);
-//                dataOut.setMemory(totalMemory/1024, i);
-                dataOut.setPoint(obj[i].length,i);
+                //Keep in variable time of execute and memory use values
+                time[part] = totalTime/1000;
+                memory[part] = totalMemory/1024;
 
+                dataOut.setPoint(measureKit.getLength(part), part);
             }
+            timeEachKitElem.add(time);
+            memoryEachKitElem.add(memory);
+
 
         }
         double[] avgTime = new double[numberOfPoints];
         for(int j = 0; j<numberOfPoints; j++){
             double temp = 0d;
-            for (int i = 0; i<timeEachKitElem.length; i++){
-                temp += timeEachKitElem[i][j];
+            for (int i = 0; i<timeEachKitElem.size(); i++){
+                temp += timeEachKitElem.get(i)[j];
             }
             avgTime[j] = temp/numberOfPoints;
         }
         double[] avgMemory = new double[numberOfPoints];
         for(int j = 0; j<numberOfPoints; j++){
             double temp = 0d;
-            for (int i = 0; i<memoryEachKitElem.length; i++){
-                temp += memoryEachKitElem[i][j];
+            for (int i = 0; i<memoryEachKitElem.size(); i++){
+                temp += memoryEachKitElem.get(i)[j];
             }
             avgMemory[j] = temp/numberOfPoints;
         }
@@ -254,7 +261,7 @@ public class Main {
     }
 
 
-    /**
+    /*
      * Launch the application.
      */
     public static void main(String[] args) {

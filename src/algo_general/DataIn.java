@@ -13,10 +13,10 @@ import algo_arrays.*;
 public class DataIn {
 
     private AlgorythmFile algorythmFile;
-    private DataStructure arrData;
+    private DataStructures arrData;
     private int numberOfPoints;
 
-    public DataIn(AlgorythmFile algorythmFile, DataStructure arrData, int numberOfPoints){
+    public DataIn(AlgorythmFile algorythmFile, DataStructures arrData, int numberOfPoints){
         this.algorythmFile = algorythmFile;
         this.arrData =  arrData;
         this.numberOfPoints = numberOfPoints;
@@ -25,7 +25,7 @@ public class DataIn {
         return algorythmFile;
     }
 
-    public DataStructure getArrData(){
+    public DataStructures getArrData(){
         return arrData;
     }
     public void setNumberOfPoints(int count){
