@@ -23,7 +23,7 @@ public class IntegerArray extends Structure {
 
     private void createStructure() {
         Random random = new Random((int)Math.random()*100);
-        data = new DataArrays<int[]>();
+        data = new DataArrays<Integer[]>();
         for(int i=0; i<kitSize; i++){
             array = new Integer[length];
             for (int j=0; j<array.length; j++){

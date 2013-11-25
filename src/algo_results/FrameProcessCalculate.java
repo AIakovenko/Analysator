@@ -11,7 +11,7 @@ import java.awt.*;
  * To change this template use File | Settings | File Templates.
  */
 public class FrameProcessCalculate extends JFrame {
-    Dimension dimWindow;
+    private final Dimension WINDOW_SIZE = new Dimension(400,200);
     private JLabel nameAlgorythm;
     private JLabel currentPoint;
     private JLabel totalPoints;
@@ -26,8 +26,8 @@ public class FrameProcessCalculate extends JFrame {
     private void initialize(){
         new JFrame("Calculate Processing");
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        dimWindow = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(400, 200);
+        Dimension dimWindow = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(WINDOW_SIZE);
         setLocation(dimWindow.width / 2 - getWidth() / 2, dimWindow.height / 2 - getHeight() / 2);
         setResizable(false);
         this.getContentPane().setLayout(null);

@@ -14,12 +14,10 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.EventObject;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 public class FrameAddArraysData extends JFrame  {
-
+    private final Dimension WINDOW_SIZE = new Dimension(700,400);
     private final int STEP_LEFT = 10;
     private final int STEP_DOWN = 40;
     private final int FIELD_WIDTH = 200;
@@ -46,13 +44,13 @@ public class FrameAddArraysData extends JFrame  {
         new JFrame();
         this.setResizable(false);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setSize(700, 400);
+        this.setSize(WINDOW_SIZE);
         this.setLocation(screenSize.width/2-getWidth()/2, screenSize.height/2-getHeight()/2);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.getContentPane().setLayout(null);
 
-        dataList = Main.transferArraysDataFromFrameGeneralWindow();
-
+//        dataList = Main.transferArraysDataFromFrameGeneralWindow();
+        dataList = Main.getStructureBase();
 
         initTextField();
         initComboBox();
@@ -79,7 +77,8 @@ public class FrameAddArraysData extends JFrame  {
         buttonOk.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Main.transferDataArrayToMainWindow(dataList);
+//                Main.transferDataArrayToMainWindow(dataList);
+                Main.setStructureBase(dataList);
                 dispose();
             }
         });
@@ -105,8 +104,11 @@ public class FrameAddArraysData extends JFrame  {
                         /*DataStructure data = Main.transferArraysDataFromFrameGeneralWindow().getData(
                             Main.transferArraysDataFromFrameGeneralWindow().getLength()-1
                         );*/
-                        DataStructures data = Main.transferArraysDataFromFrameGeneralWindow().getData(
+                        /*DataStructures data = Main.transferArraysDataFromFrameGeneralWindow().getData(
                                 Main.transferArraysDataFromFrameGeneralWindow().getLength()-1
+                        );*/
+                        DataStructures data = Main.getStructureBase().getData(
+                                Main.getStructureBase().getLength()-1
                         );
                         tableModelArrays.addRow(loadRow(data));
                     }catch (InterruptedException ex){
@@ -344,7 +346,7 @@ public class FrameAddArraysData extends JFrame  {
     }
     private void initComboBox(){
         String[] valueTypes = {"Integer", "Float", "String"};
-        structs = new Hashtable<Integer, Object>();
+        structs = new HashMap<Integer, Object>();
         structs.put(0, new Integer(0));
         structs.put(1, new float[0]);
         structs.put(2, new String());
@@ -352,6 +354,7 @@ public class FrameAddArraysData extends JFrame  {
         comboBoxType = new JComboBox(valueTypes);
         comboBoxType.setBounds(textFieldResult.getX(),
                 textFieldResult.getY() + textFieldResult.getHeight()+GAP, FIELD_WIDTH, FIELD_HEIGHT);
+
         String[] valueItems = {"Unsorted","Sorted"};
         comboBoxState = new JComboBox(valueItems);
         comboBoxState.setBounds(comboBoxType.getX(), comboBoxType.getY()+comboBoxType.getHeight()+10,

@@ -12,7 +12,7 @@ import java.util.Random;
  * Time: 10:42 AM
  */
 public class FloatArray extends Structure {
-    private float[] array;
+    private Float[] array;
     public FloatArray(int kit, int length){
         this.kitSize = kit;
         this.length = length;
@@ -22,9 +22,9 @@ public class FloatArray extends Structure {
 
     private void createStructure() {
         Random random = new Random((int)Math.random()*100);
-        data = new DataArrays<float[]>();
+        data = new DataArrays<Float[]>();
         for(int i=0; i<kitSize; i++){
-            array = new float[length];
+            array = new Float[length];
             for (int j=0; j<array.length; j++){
                 array[j] = random.nextFloat();
             }

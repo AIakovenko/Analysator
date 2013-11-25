@@ -26,7 +26,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class ResultView extends JFrame {
 
-    private Dimension dimention;
+    private final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();;
     private JPanel memory;
     private JPanel time;
 
@@ -59,11 +59,10 @@ public class ResultView extends JFrame {
     }
     private void initialize(){
         new JFrame();
-        dimention = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(dimention.width-200, dimention.height-350);
+        setSize(SCREEN_SIZE.width-410, SCREEN_SIZE.height-250);
         setLocation(100,100);
-        setResizable(false);
-        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+//        setResizable(false);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(null);
         initTable();
         initButtons();
@@ -71,67 +70,56 @@ public class ResultView extends JFrame {
 
     }
     private void initViewPort(){
+        JTabbedPane tab = new JTabbedPane();
+        tab.setBounds(mainTable.getX() + mainTable.getWidth() + 20, 10, 400, 400);
 
         memory = new PaneGraph("Memory, kB", memoryGrafPoints()).getPaneGraf();
-        memory.setBounds(getWidth()-320,10,300,300);
+//        memory.setBounds(getWidth()-320,10,400,400);
         memory.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         memory.setBackground(Color.white);
 //        memory.setPoints(memoryGrafPoints(), setColorsGraph());// getMaxMemory()); //TODO
 //        memory.setScale(100);
 
         time = new PaneGraph("Time, c.", timeGrafPoints()).getPaneGraf();
-        time.setBounds(getWidth() - memory.getWidth() - 330, 10, 300, 300);
+//        time.setBounds(getWidth() - memory.getWidth() - 330, 10, 400, 400);
         time.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         time.setBackground(Color.white);
 //        time.setPoints(timeGrafPoints(), setColorsGraph());
 //        time.setScale(100);
-
-        add(memory);
-        add(time);
+        tab.addTab("Time",time);
+        tab.addTab("Memory",memory);
+          add(tab);
+//        add(memory);
+//        add(time);
     }
 
     private void initTable(){
         TableCellEditor nonSelEditor = new TableCellEditor() {
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             @Override
-            public Object getCellEditorValue() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public Object getCellEditorValue() {return null;}
 
             @Override
-            public boolean isCellEditable(EventObject anEvent) {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public boolean isCellEditable(EventObject anEvent) {return false;}
 
             @Override
-            public boolean shouldSelectCell(EventObject anEvent) {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public boolean shouldSelectCell(EventObject anEvent) {return false;}
 
             @Override
-            public boolean stopCellEditing() {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public boolean stopCellEditing() {return false;}
 
             @Override
-            public void cancelCellEditing() {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public void cancelCellEditing() {/*NOP*/}
 
             @Override
-            public void addCellEditorListener(CellEditorListener l) {
-
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public void addCellEditorListener(CellEditorListener l) {/*NOP*/}
 
             @Override
-            public void removeCellEditorListener(CellEditorListener l) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public void removeCellEditorListener(CellEditorListener l) {/*NOP*/}
         };
         String[] mainTableTitle = {"","Name","Time","Memory","Max.value","Data type"};
         modelMainTable = new DefaultTableModel();
@@ -165,7 +153,7 @@ public class ResultView extends JFrame {
         });
 
         JScrollPane paneMainTable = new JScrollPane(mainTable);
-        paneMainTable.setBounds(10,10, 520,150);
+        paneMainTable.setBounds(10,30, 520,170);
 
 
         String[] auxiliaryTableTitle = {"Point","Time","Memory"};
@@ -183,7 +171,7 @@ public class ResultView extends JFrame {
 
         JScrollPane paneAuxiliaryTable = new JScrollPane(auxiliaryTable);
         paneAuxiliaryTable.setBounds(paneMainTable.getX(),paneMainTable.getY()+paneMainTable.getHeight()+10,
-                paneMainTable.getWidth(),140);
+                paneMainTable.getWidth(),200);
 
         add(paneMainTable);
         add(paneAuxiliaryTable);
@@ -306,7 +294,7 @@ class PaneGraph extends JPanel{
         //створюємо панель для графіка
         final ChartPanel chartPanel = new ChartPanel(getChart());
            //встановлюємо розмір діаграми (можна також скористатись методами JFreeChart цього)
-        chartPanel.setPreferredSize(new java.awt.Dimension(280, 280));
+        chartPanel.setPreferredSize(new java.awt.Dimension(380, 350));
         //додаємо панель на створений нами фрейм
         chartPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -375,8 +363,8 @@ class PaneGraph extends JPanel{
         //створюємо діаграму
         final JFreeChart chart = ChartFactory.createXYLineChart(
                 titleGraph, //Заголовок діаграми
-                "X",  //назва осі X
-                "Y",  //назва осі Y
+                "Number of elements",  //назва осі X
+                "Time",  //назва осі Y
                 data, //дані
                 PlotOrientation.VERTICAL, //орієнтація
                 true, // включити легенду

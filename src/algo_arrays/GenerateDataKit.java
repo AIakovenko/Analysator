@@ -32,7 +32,8 @@ public class GenerateDataKit implements Runnable {
     public void run(){
         data = createArray(type);
 //        if(data != null){
-            ArraysDataBase str = Main.transferArraysDataFromFrameGeneralWindow();
+            /*ArraysDataBase str = Main.transferArraysDataFromFrameGeneralWindow();*/
+        ArraysDataBase str = Main.getStructureBase();
             str.addData(data);
 //        }else{
 //            throw new UnsupportedOperationException();

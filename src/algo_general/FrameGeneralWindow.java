@@ -40,6 +40,7 @@ public class FrameGeneralWindow extends JFrame {
     private JTable mainTable;
     private JTable resultTable;
 
+    private JToggleButton mBarButtonStop;
     private Dimension dimWindow;
 
     private DefaultMutableTreeNode algo;
@@ -51,8 +52,8 @@ public class FrameGeneralWindow extends JFrame {
     private DefaultTableModel modelResultTable;
     private JPopupMenu mainPopupMenu;
     private JPopupMenu resultPopupMenu;
-    private ArraysDataBase dataArrays;
-    private FileDataBase dataBase;
+//    private ArraysDataBase dataArrays;
+//    private FileDataBase dataBase;
     private int selectedRow = -1;
     private ListDataOut listDataOut;
     private JLabel statusLabel;
@@ -64,7 +65,7 @@ public class FrameGeneralWindow extends JFrame {
     }
 
 
-    public void setDataBase(FileDataBase data){
+    /*public void setDataBase(FileDataBase data){
 
         dataBase = data;
         algoTreeView = new JTree(loadModelTreeView());
@@ -76,12 +77,20 @@ public class FrameGeneralWindow extends JFrame {
         upperSplit.setLeftComponent(scrollTreeView);
         repaint();
     }
+*/
+    public void setDataBase(){
 
-//    public void setArrayDataBase(ArraysDataBase data){
-//        dataArrays = data;
-//        setUpArraysColumn(mainTable.getColumnModel().getColumn(4));
-//        mainTable.updateUI();
-//    }
+//        dataBase = data;
+        algoTreeView = new JTree(loadModelTreeView());
+        scrollTreeView = new JScrollPane(algoTreeView);
+
+        addNodeListener();
+        algoTreeView.expandPath(new TreePath(sort.getPath()));
+        algoTreeView.expandPath(new TreePath(search.getPath()));
+        upperSplit.setLeftComponent(scrollTreeView);
+        repaint();
+    }
+
 
     public  void setListDataOut(ListDataOut data){
         listDataOut = data;
@@ -96,15 +105,14 @@ public class FrameGeneralWindow extends JFrame {
         }
     }
 
-    public ArraysDataBase getDataArrays(){
-        return dataArrays;
-    }
 
+/*
     public FileDataBase getFileDataBase(){
         return dataBase;
     }
+*/
 
-    public void setDataArrays(ArraysDataBase obj){
+   /* public void setDataArrays(ArraysDataBase obj){
         dataArrays = new ArraysDataBase();
         for(int i = 0; i<obj.getLength(); i++){
             if(!dataArrays.addData(obj.getData(i))){
@@ -115,7 +123,7 @@ public class FrameGeneralWindow extends JFrame {
         }
         setUpArraysColumn(mainTable.getColumnModel().getColumn(4));
         mainTable.updateUI();
-    }
+    }*/
 
     private void initialize() {
 
@@ -141,9 +149,9 @@ public class FrameGeneralWindow extends JFrame {
         initButtonBar();
         initStatusBar();
 
-        dataBase = new FileDataBase();
+//        dataBase = new FileDataBase();
         initTreeView();
-        dataArrays = new ArraysDataBase();
+        /*dataArrays = new ArraysDataBase();*/
         initTable();
 
         initPopupMenu();
@@ -158,6 +166,23 @@ public class FrameGeneralWindow extends JFrame {
                 statusBar.setBounds(0,getHeight()-50,getWidth(),25);
                 splitPane.repaint();
                 scrollTreeView.repaint();
+            }
+        });
+        addWindowFocusListener(new WindowAdapter() {
+            /**
+             * Invoked when the Window is set to be the focused Window, which means
+             * that the Window, or one of its subcomponents, will receive keyboard
+             * events.
+             *
+             * @since 1.4
+             */
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                super.windowGainedFocus(e);
+                setDataBase();
+                setUpArraysColumn(mainTable.getColumnModel().getColumn(4));
+                mainTable.updateUI();
+
             }
         });
     }
@@ -205,9 +230,10 @@ public class FrameGeneralWindow extends JFrame {
         ArrayList<DefaultMutableTreeNode> listSearches = new ArrayList<DefaultMutableTreeNode>();
         DefaultMutableTreeNode node;
 
+        FileDataBase fileBase = Main.getFileBase();
         int indexSort = 0, indexSearch = 0;
 
-        if (dataBase != null){
+        /*if (dataBase != null){
             for(int i = 0; i<dataBase.getLength(); i++){
                 if(dataBase.getFile(i).getAlgorythmType().equals("Sort")){
 
@@ -223,6 +249,23 @@ public class FrameGeneralWindow extends JFrame {
                     indexSearch++;
                 }
             }
+        }*/
+        if (fileBase != null){
+            for(int i = 0; i<fileBase.getLength(); i++){
+                if(fileBase.getFile(i).getAlgorythmType().equals("Sort")){
+
+                    node = new DefaultMutableTreeNode(fileBase.getFile(i).getAlgorythmName());
+                    listSorts.add(node) ;
+                    sort.add(listSorts.get(indexSort));
+                    indexSort++;
+                }
+                if(fileBase.getFile(i).getAlgorythmType().equals("Search")){
+                    node = new DefaultMutableTreeNode(fileBase.getFile(i).getAlgorythmName());
+                    listSearches.add(node);
+                    search.add(listSearches.get(indexSearch));
+                    indexSearch++;
+                }
+            }
         }
 
         algo.add(sort);
@@ -233,9 +276,9 @@ public class FrameGeneralWindow extends JFrame {
     private void addRowToChoiceWindow(TreePath selPath){
         String name = selPath.getPathComponent(selPath.getPathCount()-1).toString();
         AlgorythmFile currentAlgorithm = null;
-        for(int i = 0; i<dataBase.getLength(); i++){
-            if (dataBase.getFile(i).getAlgorythmName().equals(name)){
-                currentAlgorithm = dataBase.getFile(i);
+        for(int i = 0; i<Main.getFileBase().getLength(); i++){
+            if (Main.getFileBase().getFile(i).getAlgorythmName().equals(name)){
+                currentAlgorithm = Main.getFileBase().getFile(i);
             }
         }
         if(currentAlgorithm != null){
@@ -247,11 +290,13 @@ public class FrameGeneralWindow extends JFrame {
     private void setUpArraysColumn(TableColumn arraysColumn) {
 
         JComboBox comboBox = new JComboBox();
-        if(dataArrays != null){
-            for(int i = 0; i<dataArrays.getLength(); i++){
-                comboBox.addItem(dataArrays.getData(i).getType()+
-                        "[" + Integer.toString(dataArrays.getData(i).getLength(0)) +"] "+
-                dataArrays.getData(i).getState() + "; Kit=" + dataArrays.getData(i).getLength(0));
+        ArraysDataBase structureBase = Main.getStructureBase();
+
+        if(structureBase != null){
+            for(int i = 0; i<structureBase.getLength(); i++){
+                comboBox.addItem(structureBase.getData(i).getType()+
+                        "[" + Integer.toString(structureBase.getData(i).getLength(0)) +"] "+
+                        structureBase.getData(i).getState() + "; Kit=" + structureBase.getData(i).getLength(0));
             }
         }
         arraysColumn.setCellEditor(new DefaultCellEditor(comboBox));
@@ -399,9 +444,9 @@ public class FrameGeneralWindow extends JFrame {
             @Override
             public void mouseReleased(MouseEvent e) {
 
-                if (dataArrays.deleteData(selectedRow) != null){
+//                if (Main.getStructureBase().deleteData(selectedRow) != null){
                     modelMainTable.removeRow(selectedRow);
-                }
+//                }
             }
         });
         resultPopupMenu = new JPopupMenu();
@@ -588,7 +633,7 @@ public class FrameGeneralWindow extends JFrame {
             }
         });
 
-        final JToggleButton mBarButtonStop = new JToggleButton();
+        mBarButtonStop = new JToggleButton();
         ImageIcon iconButtonStop = new ImageIcon(Main.ICO_PATH + "stop.png");
         mBarButtonStop.setIcon(iconButtonStop);
         mBarButtonStop.setBorderPainted(false);
@@ -661,10 +706,11 @@ public class FrameGeneralWindow extends JFrame {
         }
     }
     private void newWorkSpace(){
-        dataBase = null;
-        dataArrays = null;
+        Main.setFileBase(null);
+        Main.setStructureBase(null);
         listDataOut = null;
-        setDataBase(dataBase);
+//        setDataBase(dataBase);
+        setDataBase();
 
         int mainTableRowCount = modelMainTable.getRowCount();
         int resultTableRowCount = modelResultTable.getRowCount();
@@ -677,7 +723,7 @@ public class FrameGeneralWindow extends JFrame {
 
     }
     private boolean saveWorkspace(File saveFile){
-        WorkspaceData saveData = new WorkspaceData(dataArrays,dataBase,listDataOut);
+        WorkspaceData saveData = new WorkspaceData(Main.getStructureBase(),Main.getFileBase(),listDataOut);
         try{
             FileOutputStream outputStream = new FileOutputStream(saveFile);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
@@ -699,8 +745,11 @@ public class FrameGeneralWindow extends JFrame {
             objectInputStream.close();
 
 //            setArrayDataBase(openData.getArraysDataBase());
-            setDataArrays(openData.getArraysDataBase());
-            setDataBase(openData.getFileDataBase());
+
+//            setDataArrays(openData.getArraysDataBase());
+            Main.setStructureBase(openData.getArraysDataBase());
+//            setDataBase(openData.getFileDataBase());
+            setDataBase();
             setListDataOut(openData.getListDataOut());
             return true;
 
@@ -711,6 +760,7 @@ public class FrameGeneralWindow extends JFrame {
 
 
     private void runTest(){
+        ArraysDataBase structureData = Main.getStructureBase();
         selectedRow = mainTable.getSelectedRow();
 
         if(selectedRow == -1)//if nothing was selected
@@ -721,17 +771,17 @@ public class FrameGeneralWindow extends JFrame {
         else{
             AlgorythmFile aF = null;
             DataStructures  aD = null;
-            for (int i = 0; i<dataBase.getLength(); i++){
-                if(dataBase.getFile(i).getAlgorythmName().equals(mainTable.getValueAt(selectedRow,1).toString()))
-                    aF = dataBase.getFile(i);
+            for (int i = 0; i<Main.getFileBase().getLength(); i++){
+                if(Main.getFileBase().getFile(i).getAlgorythmName().equals(mainTable.getValueAt(selectedRow,1).toString()))
+                    aF = Main.getFileBase().getFile(i);
             }
-            for (int i = 0; i<dataArrays.getLength(); i++){
+            for (int i = 0; i<structureData.getLength(); i++){
                 if(
-                        (dataArrays.getData(i).getLength(0) ==
+                        (structureData.getData(i).getLength(0) ==
                                 parseArrayLength(mainTable.getValueAt(selectedRow,4).toString()) )
-                                && (dataArrays.getData(i).getType().equals(parseArrayType(mainTable.getValueAt(selectedRow, 4).toString())))
+                                && (structureData.getData(i).getType().equals(parseArrayType(mainTable.getValueAt(selectedRow, 4).toString())))
                         )
-                        aD = dataArrays.getData(i);
+                        aD = structureData.getData(i);
             }
            /**
             * Run process of measuring
@@ -744,6 +794,7 @@ public class FrameGeneralWindow extends JFrame {
             if(listDataOut.addData(dataOut))
                 addResultToTable(dataOut.getAlgoName(), dataOut.getMaxTime(), dataOut.getMaxMemory(),
                         dataOut.getMaxValueLength(), dataOut.getNumberOfPoints(), dataOut.getType());
+            mBarButtonStop.setEnabled(false);
         }
     }
 

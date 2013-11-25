@@ -211,7 +211,7 @@ public class FrameFileDataBaseEditor extends JFrame {
         ImageIcon icon = new ImageIcon(Main.ICO_PATH +"chart_stock.png");
         this.setIconImage(icon.getImage());
 
-        dataBase = Main.transferFileDataFromFrameGeneralWindow();
+        dataBase = Main.getFileBase();
 
         initButtons();
         initPopupMenu();
@@ -230,7 +230,7 @@ public class FrameFileDataBaseEditor extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 applyData();
-                Main.sendDataBaseToMainWindow(dataBase);
+                Main.setFileBase(dataBase);
             }
         });
 
@@ -240,7 +240,7 @@ public class FrameFileDataBaseEditor extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 applyData();
-                Main.sendDataBaseToMainWindow(dataBase);
+                Main.setFileBase(dataBase);
                 dispose();
             }
         });
@@ -309,7 +309,7 @@ public class FrameFileDataBaseEditor extends JFrame {
         }
 
 
-        dataBase = Main.transferFileDataFromFrameGeneralWindow();
+        dataBase = Main.getFileBase();
         for (int i = 0; i<dataBase.getLength(); i++){
                 tableModel.addRow(new String[]
                         {

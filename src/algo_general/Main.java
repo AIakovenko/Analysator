@@ -1,6 +1,5 @@
 package algo_general;
 
-import algo_arrays.DataArrays;
 import algo_arrays.ArraysDataBase;
 import algo_arrays.DataStructures;
 import algo_files.*;
@@ -31,26 +30,67 @@ public class Main {
     private static Thread threadExamineAlgorythm;
     private static AnalysatorFrames frames;
 
-    public static void transferDataArrayToMainWindow(ArraysDataBase array){
-        frames.getMainWindow().setDataArrays(array);
+    /*
+     * Contains data structures for testing
+     */
+    private static ArraysDataBase structuresBase;
 
+    /*
+     *Contains information about .class files (implementations of algorythms
+     */
+    private static FileDataBase fileBase;
+
+
+    /**
+     * Returns object which contains structures of data.
+     * @return object ArrayDataBase
+     */
+    public static ArraysDataBase getStructureBase(){
+        return structuresBase;
     }
 
+    /**
+     * Sets object which contains structures of data.
+     * @param data object ArrayDataBase
+     */
+     public static void setStructureBase(ArraysDataBase data){
+         structuresBase = data;
+     }
+
+    /**
+     * Returns object which contains information about implementation algorythm files.
+     * @return object FileDataBase
+     */
+     public static FileDataBase getFileBase(){
+        return fileBase;
+    }
+
+    /**
+     * Sets object which contains information about implementation algorythm files.
+     * @param data object FileDataBase
+     */
+    public static void setFileBase(FileDataBase data){
+        fileBase = data;
+    }
+
+    /**
+     * Starts main program window
+     */
     public static void runDataWindow(){
         frames.runDataWindow();
         frames.getDataWindow().setVisible(true);
     }
-    public static ArraysDataBase transferArraysDataFromFrameGeneralWindow(){
-        return frames.getMainWindow().getDataArrays();
-    }
-    public static FileDataBase transferFileDataFromFrameGeneralWindow(){
+    /*public static FileDataBase transferFileDataFromFrameGeneralWindow(){
         return frames.getMainWindow().getFileDataBase();
-    }
-
+    }*/
+    /**
+     * Starts window of algorythm implementation files editor
+     */
     public static void runFileDataBaseEditor(){
         frames.runFileDataBaseEditor();
         frames.getFileDataBaseEditor().setVisible(true);
     }
+
     public static void runFrameCreateAlgo(){
         frames.runFrameCreateAlgo();
         frames.getFrameCreateAlgo().setVisible(true);
@@ -63,9 +103,9 @@ public class Main {
         frames.getResultView().setData(obj, selResultRows);
     }
 
-    public static void sendDataBaseToMainWindow(FileDataBase data){
+    /*public static void sendDataBaseToMainWindow(FileDataBase data){
         frames.getMainWindow().setDataBase(data);
-    }
+    }*/
     public static void stopTest(){
         try{
             if (threadExamineAlgorythm.isAlive())
@@ -151,9 +191,14 @@ public class Main {
                 }catch (InterruptedException ex){
                     ex.getStackTrace();
                 }
-                //Keep in variable time of execute and memory use values
+
+                /*
+                 * Keep in variable time of execute and memory use values
+                 */
                 time[part] = totalTime/1000;
-                memory[part] = totalMemory/1024;
+                //TODO measure used memory
+//                memory[part] = totalMemory/1024;
+                memory[part] = 0d;
 
                 dataOut.setPoint(measureKit.getLength(part), part);
             }
@@ -270,7 +315,8 @@ public class Main {
                 try {
 
                     frames = new AnalysatorFrames();
-
+                    structuresBase = new ArraysDataBase();
+                    fileBase = new FileDataBase();
                     frames.runMainWindow();
                     frames.getMainWindow().setVisible(true);
                 } catch (Exception e) {
