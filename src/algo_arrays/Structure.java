@@ -13,6 +13,7 @@ public abstract class Structure {
     protected DataStructures data;
     protected int kitSize;
     protected int length;
+    protected int chars;
 
     public abstract void sortedStructure();
     public abstract DataStructures getStructure();

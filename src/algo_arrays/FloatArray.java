@@ -13,9 +13,10 @@ import java.util.Random;
  */
 public class FloatArray extends Structure {
     private Float[] array;
-    public FloatArray(int kit, int length){
+    public FloatArray(int kit, int length, int chars){
         this.kitSize = kit;
         this.length = length;
+        this.chars = chars;
 
         createStructure();
     }
@@ -26,7 +27,7 @@ public class FloatArray extends Structure {
         for(int i=0; i<kitSize; i++){
             array = new Float[length];
             for (int j=0; j<array.length; j++){
-                array[j] = random.nextFloat();
+                array[j] = random.nextFloat()*chars;
             }
             data.addToKit(array);
         }

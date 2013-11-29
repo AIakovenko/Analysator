@@ -18,15 +18,17 @@ public class GenerateDataKit implements Runnable {
     private DataStructures data;
     private int kitSize;
     private int length;
+    private int chars;
     private Object type;           //Describes structure type (for example: 0 - Integer, 1 - Float)
     private String state;       //Describes structure state (such as sorted or unsorted)
 
 
-    public GenerateDataKit(int length, Object type, String state, int kitSize){
+    public GenerateDataKit(int length, Object type, String state, int kitSize, int chars){
         this.length = length;
         this.type = type;
         this.state = state;
         this.kitSize = kitSize;
+        this.chars = chars;
     }
 
     public void run(){
@@ -47,15 +49,15 @@ public class GenerateDataKit implements Runnable {
         Structure structure;
 
         if(type.getClass() == Integer.class){
-            structure = new IntegerArray(kitSize,length);
+            structure = new IntegerArray(kitSize, length, chars);
         }
         else
         if(type.getClass() == Float.class){
-            structure = new FloatArray(kitSize,length);
+            structure = new FloatArray(kitSize, length, chars);
         }
         else
         if(type.getClass() == String.class){
-            structure = new StringArray(kitSize,length);
+            structure = new StringArray(kitSize, length, chars);
         }
         else {
             return null;

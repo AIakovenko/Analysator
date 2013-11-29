@@ -14,10 +14,10 @@ import java.util.Random;
 public class IntegerArray extends Structure {
     private Integer[] array;
 
-    public IntegerArray(int kit, int length){
+    public IntegerArray(int kit, int length, int chars){
         this.kitSize = kit;
         this.length = length;
-
+        this.chars = chars;
         createStructure();
     }
 
@@ -27,7 +27,7 @@ public class IntegerArray extends Structure {
         for(int i=0; i<kitSize; i++){
             array = new Integer[length];
             for (int j=0; j<array.length; j++){
-                array[j] = random.nextInt();
+                array[j] = random.nextInt(chars);
             }
             data.addToKit(array);
         }

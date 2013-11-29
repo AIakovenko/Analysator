@@ -13,9 +13,10 @@ import java.util.Random;
  */
 public class StringArray extends Structure {
     private String[] array;
-    public StringArray(int kit, int length){
+    public StringArray(int kit, int length, int chars){
         this.kitSize = kit;
         this.length = length;
+        this.chars = chars;
 
         createStructure();
     }
@@ -26,7 +27,7 @@ public class StringArray extends Structure {
         for(int i=0; i<kitSize; i++){
             array = new String[length];
             for (int j=0; j<array.length; j++){
-                array[j] ="testString " + random.nextFloat();
+                array[j] = Integer.toString(random.nextInt(chars));
             }
             data.addToKit(array);
         }
