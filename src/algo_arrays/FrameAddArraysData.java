@@ -17,22 +17,40 @@ import java.awt.event.*;
 import java.util.*;
 
 public class FrameAddArraysData extends JFrame  {
-    private final Dimension WINDOW_SIZE = new Dimension(700,400);
+    private final Dimension WINDOW_SIZE = new Dimension(730,400);
     private final int STEP_LEFT = 10;
     private final int STEP_DOWN = 40;
     private final int FIELD_WIDTH = 200;
     private final int FIELD_HEIGHT = 25;
+    private final int TABLE_WIDTH = 255;
     private final int GAP = 10; // This constant sets space between components
 
     private JTextField textFieldResult;
     private JComboBox comboBoxType;
     private JComboBox comboBoxState;
+    private JComboBox wordLength;
     private DefaultTableModel tableModelArrays;
     private JPopupMenu popupMenu;
     private ArraysDataBase dataList;
     private JSpinner numberKitElem;
+
+    /**
+     * Variable sets number of selected row in the table there contain notices about structures
+     * which have been generated.
+     */
     private int selectedRow = -1;
+
+    /**
+     * Map contains template-objects for creation structure given type.
+     */
     private Map<Integer,Object> structs;
+
+    /**
+     * Sets max number of characters in the elements into data structure.
+     * Default value x10.0
+     */
+    private int numberOfLetters = 1;
+    private Map valueWords;
 
     public FrameAddArraysData(){
         super("Arrays Editor");
@@ -49,15 +67,14 @@ public class FrameAddArraysData extends JFrame  {
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.getContentPane().setLayout(null);
 
-//        dataList = Main.transferArraysDataFromFrameGeneralWindow();
         dataList = Main.getStructureBase();
 
-        initTextField();
-        initComboBox();
+        controlsStructLength();
+        controlsDataParam();
         initTable();
         initButtons();
         initPopupMenu();
-        initSpinner();
+        controlsKitParam();
     }
 
     private void initButtons(){
@@ -72,12 +89,11 @@ public class FrameAddArraysData extends JFrame  {
         });
 
         JButton buttonOk = new JButton("OK");
-        buttonOk.setBounds(getWidth()-255, getHeight()-65,
+        buttonOk.setBounds(getWidth()-260, getHeight()-65,
                 Main.buttonSize.width,Main.buttonSize.height);
         buttonOk.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                Main.transferDataArrayToMainWindow(dataList);
                 Main.setStructureBase(dataList);
                 dispose();
             }
@@ -90,35 +106,7 @@ public class FrameAddArraysData extends JFrame  {
         buttonGenerate.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
-                if (checkData()){
-                    try{
-                        GenerateDataKit dataKit = new GenerateDataKit(Integer.parseInt(textFieldResult.getText()),
-                                structs.get(comboBoxType.getSelectedIndex()),
-                                comboBoxState.getSelectedItem().toString(),
-                                Integer.parseInt(numberKitElem.getValue().toString()));
-
-                        Thread threadDataKit = new Thread(dataKit);
-                        threadDataKit.run();
-                        threadDataKit.join();
-                        /*DataStructure data = Main.transferArraysDataFromFrameGeneralWindow().getData(
-                            Main.transferArraysDataFromFrameGeneralWindow().getLength()-1
-                        );*/
-                        /*DataStructures data = Main.transferArraysDataFromFrameGeneralWindow().getData(
-                                Main.transferArraysDataFromFrameGeneralWindow().getLength()-1
-                        );*/
-                        DataStructures data = Main.getStructureBase().getData(
-                                Main.getStructureBase().getLength()-1
-                        );
-                        tableModelArrays.addRow(loadRow(data));
-                    }catch (InterruptedException ex){
-                        showMessage("error", "Error# 1001 "+ex.getMessage(),"Add data error!");
-                    }catch (UnsupportedOperationException ex){
-                        showMessage("error", "Error# 1001 "+ex.getMessage(),"Add data error!");
-                        ex.printStackTrace();
-                    }
-
-                }
+                generateData();
             }
         });
 
@@ -128,12 +116,15 @@ public class FrameAddArraysData extends JFrame  {
 
     }
     private void initTable(){
+
+        /*
+         * This gives opportunity to set sells in table as manually no editable
+         */
         TableCellEditor nonSelEditor = new TableCellEditor() {
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
                 return null;
             }
-
             @Override
             public Object getCellEditorValue() {return null; }
 
@@ -155,6 +146,7 @@ public class FrameAddArraysData extends JFrame  {
             @Override
             public void removeCellEditorListener(CellEditorListener l) {/*NOP*/}
         };
+
         tableModelArrays = new DefaultTableModel();
 
         String[] columns = {"N", "Data type", "Length", "State","Kit"};
@@ -162,21 +154,28 @@ public class FrameAddArraysData extends JFrame  {
             tableModelArrays.addColumn(s);
         }
 
+        /*
+         * Add information about have generated structures to the table model
+         */
         if(dataList != null){
             for(int i = 0; i<dataList.getLength(); i++){
                 tableModelArrays.addRow(new String[]{
                         Integer.toString(i + 1),
-                        /*dataList.getData(i).getTypeData(),*/
                         dataList.getData(i).getType(),
-                       /* Integer.toString(dataList.getData(i).getLength()),*/
                         Integer.toString(dataList.getData(i).getLength(0)),
                         dataList.getData(i).getState()
                 });
             }
         }
 
+        /*
+         * Create table from table model
+         */
         final JTable tableArrays = new JTable(tableModelArrays);
 
+        /*
+         * Runs popup menu for edition notices which contain in table.
+         */
         tableArrays.addMouseListener(new PopupMenu(popupMenu){
             @Override
             public void maybeShowPopup(MouseEvent e) {
@@ -198,6 +197,9 @@ public class FrameAddArraysData extends JFrame  {
         tableArrays.setRowHeight(20);
         tableArrays.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        /*
+         * Changes width all the columns in the table
+         */
         tableArrays.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tableArrays.getColumnModel().getColumn(0).setPreferredWidth(23);
         tableArrays.getColumnModel().getColumn(1).setPreferredWidth(67);
@@ -205,24 +207,42 @@ public class FrameAddArraysData extends JFrame  {
         tableArrays.getColumnModel().getColumn(3).setPreferredWidth(65);
         tableArrays.getColumnModel().getColumn(4).setPreferredWidth(27);
 
+        /*
+         * Each notice sets as manually no editable
+         */
         for (int i = 0; i<tableArrays.getColumnCount(); i++ ){
             tableArrays.getColumnModel().getColumn(i).setCellEditor(nonSelEditor);
         }
 
+        /*
+         * Add scroll controls to table
+         */
         JScrollPane scrollTable = new JScrollPane(tableArrays);
-        scrollTable.setSize(255,getHeight()-150);
-        scrollTable.setLocation(getWidth()-scrollTable.getWidth()-15, 40);
+        scrollTable.setSize(TABLE_WIDTH,getHeight()-FIELD_HEIGHT-150);
+        scrollTable.setLocation(getWidth()-scrollTable.getWidth()-15, FIELD_HEIGHT+60);
 
+        /*
+         * Add table to frame
+         */
         add(scrollTable);
 
     }
-    private void initTextField(){
 
-        final int MIN_DIAPASON = 0;
-        final int MAX_DIAPASON = 10000000;
+    private void controlsStructLength(){
 
-        JLabel labelLength = new JLabel("Array length");
-        labelLength.setBounds(STEP_LEFT, STEP_DOWN-40, FIELD_WIDTH, FIELD_HEIGHT);
+        final int MIN_DIAPASON = 0;                 /*Minimum value of slider position */
+        final int MAX_DIAPASON = 10000000;          /*Maximum value of slider position */
+        final int KIT_OF_ELEMENTS_HEIGHT = 300;     /*Height of joined graphical components*/
+
+        /*
+         * Join sliders for set array length together
+         */
+        JPanel groupStructureLength = new JPanel();
+        LayoutManager layoutSliders = getContentPane().getLayout();
+        groupStructureLength.setLayout(layoutSliders);
+        groupStructureLength.setBorder(BorderFactory.createTitledBorder("Structure length"));
+        groupStructureLength.setBounds(STEP_LEFT,STEP_DOWN-20,FIELD_WIDTH+20,KIT_OF_ELEMENTS_HEIGHT);
+
 
         JLabel labelX1000000 = new JLabel("x1000000");
         labelX1000000.setBounds(STEP_LEFT, STEP_DOWN-20, FIELD_WIDTH, FIELD_HEIGHT);
@@ -278,13 +298,29 @@ public class FrameAddArraysData extends JFrame  {
         sliderLenDiv100000.setPaintTicks(true);
         sliderLenDiv100000.setSnapToTicks(true);
 
-        JLabel labelResult = new JLabel("Total");
-        labelResult.setBounds(textFieldLength.getX() + textFieldLength.getWidth()+GAP, labelLength.getY(),
-                FIELD_WIDTH, FIELD_HEIGHT);
+        /*
+         * Join components which show total length
+         */
+        JPanel groupTotal = new JPanel();
+        LayoutManager layoutGroupTotal = getContentPane().getLayout();
+        groupTotal.setLayout(layoutGroupTotal);
+        groupTotal.setBorder(BorderFactory.createTitledBorder("Total length"));
+
+        groupTotal.setSize(TABLE_WIDTH, FIELD_HEIGHT+30);
+
+        groupTotal.setLocation(
+                getWidth()- groupTotal.getWidth()-15,
+                groupStructureLength.getY()
+        );
+
         textFieldResult = new JTextField("0");
 
-        textFieldResult.setBounds(textFieldLength.getX() + textFieldLength.getWidth() + 10,
-                STEP_DOWN, FIELD_WIDTH, FIELD_HEIGHT);
+        textFieldResult.setBounds(10, 20, groupTotal.getWidth()-20, FIELD_HEIGHT);
+
+
+        /*
+         * Describe slider Change listeners for setting total value of length
+         */
         sliderLength.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -327,24 +363,54 @@ public class FrameAddArraysData extends JFrame  {
             }
         });
 
-        add(labelLength);
+        /*
+         * Add sliders to group "Structure length"
+         */
+        groupStructureLength.add(labelX1000000);
+        groupStructureLength.add(textFieldLength);
+        groupStructureLength.add(sliderLength);
 
-        add(labelX1000000);
-        add(textFieldLength);
-        add(sliderLength);
+        groupStructureLength.add(labelX10000);
+        groupStructureLength.add(textFieldLenDiv100);
+        groupStructureLength.add(sliderLenDiv100);
 
-        add(labelX10000);
-        add(textFieldLenDiv100);
-        add(sliderLenDiv100);
+        groupStructureLength.add(labelX1000);
+        groupStructureLength.add(textFieldLenDiv100000);
+        groupStructureLength.add(sliderLenDiv100000);
 
-        add(labelX1000);
-        add(textFieldLenDiv100000);
-        add(sliderLenDiv100000);
+        /*
+         * Add text field of total length to "Total length"
+         */
+        groupTotal.add(textFieldResult);
 
-        add(labelResult);
-        add(textFieldResult);
+        /*
+         *Add group "Structure length" and "Total length" to frame
+         */
+        add(groupStructureLength);
+        add(groupTotal);
     }
-    private void initComboBox(){
+
+    private void controlsDataParam(){
+        final int X_SIDE = 235;
+        final int Y_SIDE = STEP_DOWN-20;
+        final int KIT_PARAM_HEIGHT = 150;
+
+        /*
+         * Create panel for group of "Data parameters"
+         */
+        JPanel groupParam = new JPanel();
+        LayoutManager layoutGroupParam = getContentPane().getLayout();
+        groupParam.setLayout(layoutGroupParam);
+        groupParam.setBorder(BorderFactory.createTitledBorder("Parameters data"));
+
+        groupParam.setSize(FIELD_WIDTH+20, KIT_PARAM_HEIGHT);
+
+        groupParam.setLocation( X_SIDE, Y_SIDE);
+
+        /*
+         * Create control which let choice type of data.
+         * Data of this type will keep into structure.
+         */
         String[] valueTypes = {"Integer", "Float", "String"};
         structs = new HashMap<Integer, Object>();
         structs.put(0, new Integer(0));
@@ -352,40 +418,86 @@ public class FrameAddArraysData extends JFrame  {
         structs.put(2, new String());
 
         comboBoxType = new JComboBox(valueTypes);
-        comboBoxType.setBounds(textFieldResult.getX(),
-                textFieldResult.getY() + textFieldResult.getHeight()+GAP, FIELD_WIDTH, FIELD_HEIGHT);
+        comboBoxType.setBounds(10, 20, FIELD_WIDTH, FIELD_HEIGHT);
 
+        /*
+         *  Create control which let choice future of state structure.
+         *  If future sets as "Sorted" then data in structure must be sorted.
+         */
         String[] valueItems = {"Unsorted","Sorted"};
         comboBoxState = new JComboBox(valueItems);
         comboBoxState.setBounds(comboBoxType.getX(), comboBoxType.getY()+comboBoxType.getHeight()+10,
                 comboBoxType.getWidth(), comboBoxType.getHeight());
 
-        add(comboBoxType);
-        add(comboBoxState);
+        /*
+         * Sets value of word length in data structure.
+         * It is important for some algorythms when necessary manage a number of duplicate values
+         * (for example, quick sort median-of-three works faster if a lot of duplicate values in the array)
+         */
+        JLabel numbOfLetters = new JLabel("Characters: ");
+        numbOfLetters.setBounds(comboBoxState.getX(), comboBoxState.getY()+comboBoxState.getHeight()+20,
+                130, comboBoxState.getHeight());
+        valueWords = new HashMap<String, Integer>();
+        valueWords.put("1", 10);
+        valueWords.put("2", 100);
+        valueWords.put("3", 1000);
+        valueWords.put("4", 10000);
+        valueWords.put("5", 100000);
+        valueWords.put("6", 1000000);
+
+        Object[] ar =  valueWords.keySet().toArray();
+        Arrays.sort(ar);
+        wordLength = new JComboBox(ar);
+        wordLength.setBounds(comboBoxState.getX()+numbOfLetters.getWidth(), comboBoxState.getY()+comboBoxState.getHeight()+20,
+                comboBoxState.getWidth() - numbOfLetters.getWidth(), comboBoxState.getHeight());
+
+        /* Sets the default value as "x100" */
+        numberOfLetters = 1;
+        wordLength.setSelectedIndex(numberOfLetters);
+
+        groupParam.add(comboBoxType);
+        groupParam.add(comboBoxState);
+        groupParam.add(numbOfLetters);
+        groupParam.add(wordLength);
+
+        add(groupParam);
     }
-    private void initSpinner(){
+    private void controlsKitParam(){
+
+        final int X_SIDE = 235;
+        final int Y_SIDE = 180;
+        final int HEIGHT_KIT_PARAM_GROUP = 100;
         final int MIN_VALUE = 1;
         final int MAX_VALUE = 10;
         final int DEF_VALUE = 5;
+
+        JPanel groupKitParam = new JPanel();
+        LayoutManager layoutGroupKitParam = getContentPane().getLayout();
+        groupKitParam.setLayout(layoutGroupKitParam);
+        groupKitParam.setBorder(BorderFactory.createTitledBorder("Parameters of kit"));
+
+        groupKitParam.setSize(FIELD_WIDTH+20, HEIGHT_KIT_PARAM_GROUP);
+
+        groupKitParam.setLocation( X_SIDE, Y_SIDE);
+
         SpinnerNumberModel snm = new SpinnerNumberModel();
         snm.setMinimum(MIN_VALUE);
         snm.setMaximum(MAX_VALUE);
         snm.setValue(DEF_VALUE);
 
-        JLabel labelNumberElemInKit = new JLabel("Elements in kit");//TODO You need to rename this label;
+        JLabel labelNumberElemInKit = new JLabel("Elements in kit");
         labelNumberElemInKit.setSize(FIELD_WIDTH*2/3,FIELD_HEIGHT);
-        labelNumberElemInKit.setLocation(comboBoxState.getX(), comboBoxState.getY()+comboBoxState.getHeight()+GAP*3);
+        labelNumberElemInKit.setLocation(10, 20);
 
         numberKitElem = new JSpinner(snm);
         numberKitElem.setSize(FIELD_WIDTH/3, FIELD_HEIGHT);
-        numberKitElem.setLocation(comboBoxState.getX()+labelNumberElemInKit.getWidth(),
-                comboBoxState.getY()+comboBoxState.getHeight()+GAP*3);
+        numberKitElem.setLocation(groupKitParam.getWidth()-80, 20);
 
 
 
-        add(numberKitElem);
-        add(labelNumberElemInKit);
-
+        groupKitParam.add(numberKitElem);
+        groupKitParam.add(labelNumberElemInKit);
+        add(groupKitParam);
     }
     private void initPopupMenu(){
         popupMenu = new JPopupMenu();
@@ -419,16 +531,7 @@ public class FrameAddArraysData extends JFrame  {
             return true;
         }
     }
-    /*private Object[] loadRow(DataStructure obj){
-        return new Object[]
-                {
-                    Integer.toString(tableModelArrays.getRowCount()+1),
-                        obj.getTypeData(),
-                        Integer.toString(obj.getLength()),
-                        obj.getState(),
-                        obj.getKitLength()
-                };
-    }*/
+
     private Object[] loadRow(DataStructures obj){
         return new Object[]
                 {
@@ -438,6 +541,34 @@ public class FrameAddArraysData extends JFrame  {
                         obj.getState(),
                         obj.kitSize()
                 };
+    }
+
+    private void generateData(){
+        numberOfLetters = wordLength.getItemCount();
+        int cap = (Integer)valueWords.get(Integer.toString(numberOfLetters-1));
+        if (checkData()){
+            try{
+                GenerateDataKit dataKit = new GenerateDataKit(Integer.parseInt(textFieldResult.getText()),
+                        structs.get(comboBoxType.getSelectedIndex()),
+                        comboBoxState.getSelectedItem().toString(),
+                        Integer.parseInt(numberKitElem.getValue().toString()), cap);
+
+                Thread threadDataKit = new Thread(dataKit);
+                threadDataKit.start();
+                while(threadDataKit.isAlive()){
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                }
+                setCursor(Cursor.getDefaultCursor());
+                DataStructures data = Main.getStructureBase().getData(
+                        Main.getStructureBase().getLength()-1
+                );
+                tableModelArrays.addRow(loadRow(data));
+            }catch (UnsupportedOperationException ex){
+                showMessage("error", "Error# 1001 "+ex.getMessage(),"Add data error!");
+                ex.printStackTrace();
+            }
+
+        }
     }
 
     private void showMessage(String typeMessage, String text, String title){
