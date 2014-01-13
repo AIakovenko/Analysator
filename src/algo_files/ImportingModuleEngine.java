@@ -9,6 +9,7 @@ package algo_files;
  */
 
 import algo_general.Main;
+import algo_general.TestRunner;
 
 import javax.swing.*;
 import java.io.File;
@@ -64,8 +65,8 @@ public class ImportingModuleEngine implements Runnable {
 
                 long lastMemory = Runtime.getRuntime().freeMemory();
                 long stopTime = System.currentTimeMillis();
-                Main.totalMemory = (double)(firstMemory - lastMemory);
-                Main.totalTime =(double)(stopTime - startTime);
+                TestRunner.totalMemory = (double)(firstMemory - lastMemory);
+                TestRunner.totalTime =(double)(stopTime - startTime);
 
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();

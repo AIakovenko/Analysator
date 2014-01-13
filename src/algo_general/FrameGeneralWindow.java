@@ -4,7 +4,8 @@ import algo_arrays.ArraysDataBase;
 import algo_arrays.DataStructures;
 import algo_files.AlgorythmFile;
 import algo_files.FileDataBase;
-import algo_results.*;
+import algo_results.DataOut;
+import algo_results.ListDataOut;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -641,7 +642,7 @@ public class FrameGeneralWindow extends JFrame {
         mBarButtonStop.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Main.stopTest();
+                TestRunner.stopTest();
             }
         });
         mBarButtonStop.setEnabled(false);
@@ -659,6 +660,7 @@ public class FrameGeneralWindow extends JFrame {
             }
             @Override
             public void mouseClicked(MouseEvent e) {
+
                 runTest();
             }
         });
@@ -786,17 +788,26 @@ public class FrameGeneralWindow extends JFrame {
            /**
             * Run process of measuring
             */
-            DataOut dataOut = Main.runTest(aF, aD, Integer.parseInt(mainTable.getValueAt(selectedRow, 3).toString()));
+            TestRunner.interruptedProcess = false; //Set interrupted flag
+            /*DataOut dataOut = TestRunner.runTest(aF, aD, Integer.parseInt(mainTable.getValueAt(selectedRow, 3).toString()));
+*/          TestRunner runner = new TestRunner(aF, aD, Integer.parseInt(mainTable.getValueAt(selectedRow, 3).toString()));
+//            DataOut dataOut = null;
+
+                runner.execute();
+                DataOut dataOut = runner.getOut();
+
 
             /**
              * Save and write results of measuring to table results
              */
-            if(listDataOut.addData(dataOut))
+            if(runner.isDone())
+            if((dataOut != null) && listDataOut.addData(dataOut))
                 addResultToTable(dataOut.getAlgoName(), dataOut.getMaxTime(), dataOut.getMaxMemory(),
                         dataOut.getMaxValueLength(), dataOut.getNumberOfPoints(), dataOut.getType());
             mBarButtonStop.setEnabled(false);
         }
     }
+
 
 
     private int parseArrayLength(String str){

@@ -215,7 +215,7 @@ public class FrameCreateAlgo extends JFrame {
         buttonSaveToFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.saveSourceToFile(openedFile,textArea.getText());
+                PreparingNewAlgos.saveSourceToFile(openedFile,textArea.getText());
 
             }
         });
@@ -284,7 +284,7 @@ private void initPopupMenu(){
 }
 
     private void showReport(){
-        String reportText = Main.compileAlgorythm(fieldCommandLine.getText());
+        String reportText = PreparingNewAlgos.compileAlgorythm(fieldCommandLine.getText());
         try{
             if (reportText == null)
                 throw new Exception();
@@ -380,7 +380,7 @@ private void initPopupMenu(){
 //        fieldNameFile.setText(file.getName().split(".java")[0]);
         fieldNameFile.setText(file.getName());
 
-        ArrayList<String> buffer = Main.readSourceFromFile(file);
+        ArrayList<String> buffer =(ArrayList<String>)PreparingNewAlgos.readSourceFromFile(file);
 
         for(int i = buffer.size()-1; i>=0; i--)
             textArea.insert(buffer.get(i)+"\n",textArea.getRows());
