@@ -34,6 +34,7 @@ public class FrameGeneralWindow extends JFrame {
 
     private File openingFile;
     private JMenuBar menuBar;
+    private JPanel upperBars;
     private JToolBar statusBar;
     private JToolBar menuBarWithButtons;
     private JTree algoTreeView;
@@ -59,6 +60,10 @@ public class FrameGeneralWindow extends JFrame {
     private ListDataOut listDataOut;
     private JLabel statusLabel;
     private int[] selResultRows;
+
+    private final int MENU_BAR_HEIGHT = 21;
+    private final int MENU_BAR_WITH_BUTTONS_HEIGHT = 35;
+    private final int STATUS_BAR_HEIGHT = 25;
 
     public FrameGeneralWindow(String title) {
         super(title);
@@ -138,7 +143,8 @@ public class FrameGeneralWindow extends JFrame {
                 dimWindow.height - INSET*2);
         this.setMinimumSize(minDimWindows);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.getContentPane().setLayout(null);
+
+        this.setLayout(new BorderLayout());
 
         ImageIcon icon = new ImageIcon(Main.ICO_PATH + "chart_stock.png");
 
@@ -148,6 +154,7 @@ public class FrameGeneralWindow extends JFrame {
 
         initMenuBar();
         initButtonBar();
+        initUpperBars();
         initStatusBar();
 
 //        dataBase = new FileDataBase();
@@ -157,18 +164,6 @@ public class FrameGeneralWindow extends JFrame {
 
         initPopupMenu();
 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                menuBar.setBounds(0, 0, getWidth(), 21);
-                menuBarWithButtons.setBounds(0, 21, getWidth(), 30);
-                setSplitPaneBounds();
-                statusBar.setBounds(0,getHeight()-50,getWidth(),25);
-                splitPane.repaint();
-                scrollTreeView.repaint();
-            }
-        });
         addWindowFocusListener(new WindowAdapter() {
             /**
              * Invoked when the Window is set to be the focused Window, which means
@@ -190,11 +185,13 @@ public class FrameGeneralWindow extends JFrame {
 
     private void initStatusBar(){
         statusBar = new JToolBar();
-        statusBar.setBounds(0,getHeight()-25,getWidth(),25);
+        statusBar.setSize(this.getWidth(), STATUS_BAR_HEIGHT);
         statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
+
         statusLabel = new JLabel("Status");
         statusBar.add(statusLabel);
-        add(statusBar);
+
+        add(statusBar, BorderLayout.SOUTH);
         }
 
 
@@ -421,7 +418,8 @@ public class FrameGeneralWindow extends JFrame {
         JScrollPane scrollChoiceTable = new JScrollPane(resultTable);
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,upperSplit,scrollChoiceTable);
         setSplitPaneBounds();
-        add(splitPane);
+
+        add(splitPane, BorderLayout.CENTER);
 
 
     }
@@ -469,7 +467,8 @@ public class FrameGeneralWindow extends JFrame {
     private void initMenuBar(){
         menuBar = new JMenuBar();
 
-        menuBar.setBounds(0, 0, this.getWidth(), 21);
+//        menuBar.setBounds(0, 0, this.getWidth(), 21);
+        menuBar.setSize(this.getWidth(), MENU_BAR_HEIGHT);
 
         //*********************Menu File************************
         JMenu file = new JMenu ("File");
@@ -569,13 +568,12 @@ public class FrameGeneralWindow extends JFrame {
 
         menuBar.add(file);
         menuBar.add(edit);
-
-        this.getContentPane().add(menuBar);
     }
     private void initButtonBar(){
 
         menuBarWithButtons = new JToolBar();
-        menuBarWithButtons.setBounds(0,menuBar.getHeight(),getWidth(),35);
+
+        menuBarWithButtons.setSize(this.getWidth(), MENU_BAR_WITH_BUTTONS_HEIGHT);
         menuBarWithButtons.setBorderPainted(true);
         menuBarWithButtons.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
 
@@ -674,8 +672,17 @@ public class FrameGeneralWindow extends JFrame {
         menuBarWithButtons.add(mBarButtonViewResult);
         menuBarWithButtons.addSeparator();
         menuBarWithButtons.add(mBarButtonEditDataBase);
+    }
 
-        getContentPane().add(menuBarWithButtons);
+    private void initUpperBars(){
+        upperBars = new JPanel();
+        upperBars.setLayout(new BorderLayout());
+
+        upperBars.add(menuBar, BorderLayout.NORTH);
+        upperBars.add(menuBarWithButtons, BorderLayout.SOUTH);
+
+        add(upperBars, BorderLayout.NORTH);
+
     }
     private void openDialog(){
         JFileChooser fileOpen = new JFileChooser("./");
